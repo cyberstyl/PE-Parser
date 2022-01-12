@@ -11,8 +11,8 @@ pe_interface.o:
 	${CC} ${ARGS} -c ${SRC}/pe_interface.c -o ${BUILD}/pe_interface.o
 
 format:
-	astyle --style=allman --indent=spaces=2 --max-code-length=65 *.c
-	rm *.orig 
+	astyle --style=allman --indent=spaces=2 ./src/*.c
+	rm ./src/*.orig 
 
 clean:
 	rm -rf perser ${BUILD}/*.o

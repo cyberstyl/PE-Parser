@@ -24,6 +24,6 @@ Optional Image header:  0x20b PE+ (64 bit)
 ## Progress and Future goals
 - [x] Find and read PE info
 - [x] Determine PE file type (PE / PE+)
-- [ ] Find and Print address of EntryPoint 
-
+- [x] Find and Print address of EntryPoint 
+- [ ] Improve the code's read-ability
 

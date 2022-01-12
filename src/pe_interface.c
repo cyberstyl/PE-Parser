@@ -1,9 +1,8 @@
-// pe-interface.c: 
+// pe-interface.c:
 //    contains functions that deals with PE structures
 //    reading PE values and saving them in a struct.
 #include "pe_header.h"
 
-// 
 void print_info(pe_file *file)
 {
   printf("Signature:             %s\n", file->sig);
@@ -20,23 +19,31 @@ void print_info(pe_file *file)
     printf("Machine:             unknown \n");
   }
   printf("Number of Sections:    %d\n", file->sections);
-  printf("OptionalHeader size:   0x%x\n",
-         file->optionalHeaderSize);
-  
+  printf("OptionalHeader size:   %d (0x%x)\n",
+         file->optionalHeaderSize, file->optionalHeaderSize);
+
   printf("Characteristics:       ");
-  if( file->characteristics & (IMAGE_FILE_DLL) ){
+  if( file->characteristics & (IMAGE_FILE_DLL) )
+  {
     printf("DLL \n");
-  } else if(file->characteristics & (IMAGE_FILE_EXECUTABLE_IMAGE) ){
+  }
+  else if(file->characteristics & (IMAGE_FILE_EXECUTABLE_IMAGE) )
+  {
     printf("EXE \n");
   }
+  if(file->characteristics & (IMAGE_FILE_DEBUG_STRIPPED) )
+  {
+    printf("                       Stripped Debug info\n");
+  }
+
 
   switch (file->optionalImage)
   {
-  case 0x10b:
+  case OPTIONAL_IMAGE_32:
     printf("Optional Image header: 0x%x PE (32 bit) \n",
            file->optionalImage);
     break;
-  case 0x20b:
+  case OPTIONAL_IMAGE_64:
     printf("Optional Image header: 0x%x PE+ (64 bit) \n",
            file->optionalImage);
     break;
@@ -45,7 +52,11 @@ void print_info(pe_file *file)
     break;
   }
 
+  printf("Address of EntryPoint: 0x%X (%p) \n", file->EntryPoint,
+         (void *) ((file->EntryPoint) + (file->ImageBase) ));
+  printf("Image Base:            %p \n", (void *) file->ImageBase);
 }
+
 
 void read_pe(char *filename, pe_file *file)
 {
@@ -56,7 +67,7 @@ void read_pe(char *filename, pe_file *file)
   {
     exit(-1);
   }
-  // reading e_lfnew value (offset to PE)
+  // reading e_lfnew value
   if(fseek(in, 0x3c, SEEK_SET) != -1)
   {
     val = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
@@ -89,6 +100,30 @@ void read_pe(char *filename, pe_file *file)
 
     val = fgetc(in) | (fgetc(in)<<8);
     file->optionalImage = val;
+  }
+
+  // reading Address of EntryPoint and ImageBase
+  if(fseek(in, 14, SEEK_CUR) != -1)
+  {
+    val = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
+    file->EntryPoint = val;
+  }
+
+  if(file->optionalImage == OPTIONAL_IMAGE_64)
+  {
+    fseek(in, 4, SEEK_CUR);
+    file->ImageBase = (int64_t)fgetc(in) | ((int64_t)fgetc(in)<<8) |
+                      ((int64_t)fgetc(in)<<16) | ((int64_t)fgetc(in)<<24)
+                      | ( (int64_t)fgetc(in)<<32) | ( (int64_t)fgetc(in)<<40)
+                      | ( (int64_t)fgetc(in)<<48) | ((int64_t)fgetc(in)<<54);
+    fclose(in);
+    return;
+  }
+
+  if(fseek(in, 8, SEEK_CUR) != -1)
+  {
+    val = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
+    file->ImageBase = val;
   }
 
   fclose(in);
