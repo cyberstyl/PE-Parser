@@ -23,9 +23,12 @@ Image Base:            0x10000000
 
 ```
 
-## Progress and Future goals
+## To-do list / Progress
 - [x] Find and read PE info
 - [x] Determine PE file type (PE / PE+)
 - [x] Find and Print address of EntryPoint 
+- [ ] Read and print PE sections
+- [ ] Replce fgetc() functions with appropriate functions
+- [ ] Create Separate functions to read PE info
 - [ ] Improve the code's read-ability
 
