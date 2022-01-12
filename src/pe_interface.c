@@ -1,7 +1,49 @@
 // pe-interface.c:
-//    contains functions that deals with PE structures
-//    reading PE values and saving them in a struct.
+//    implements functions that deals with PE structures
+//    read PE and save information in a struct.
 #include "pe_header.h"
+
+uint8_t   get_elfnew(FILE *in){
+  uint8_t value;
+  if(fseek(in, 0x3c, SEEK_SET) != -1)
+  {
+    value = get32_le(in);
+  } else {
+    return 0;
+  }
+  return value;
+}
+
+char *get_Sig(FILE *in){
+  char *ch;
+  ch = malloc( sizeof(char) * 4);
+  ch[0] = fgetc(in);
+  ch[1] = fgetc(in);
+  ch[2] = fgetc(in);
+  ch[3] = fgetc(in);
+  return ch;
+}
+
+uint16_t  get16_le(FILE *in){
+  uint16_t value;
+  value = fgetc(in) | (fgetc(in)<<8);
+  return value;
+}
+
+uint32_t  get32_le(FILE *in){
+  uint32_t value;
+  value = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24) ;
+  return value;
+}
+
+uint64_t  get64_le(FILE *in){
+  uint64_t value;
+  value = (uint64_t)fgetc(in) | ((uint64_t)fgetc(in)<<8) |
+                      ((uint64_t)fgetc(in)<<16) | ((uint64_t)fgetc(in)<<24)
+                      | ( (uint64_t)fgetc(in)<<32) | ( (uint64_t)fgetc(in)<<40)
+                      | ( (uint64_t)fgetc(in)<<48) | ((uint64_t)fgetc(in)<<54);
+  return value;
+}
 
 void print_info(pe_file *file)
 {
@@ -61,69 +103,48 @@ void print_info(pe_file *file)
 void read_pe(char *filename, pe_file *file)
 {
   FILE *in;
-  int val = 0;
   in = fopen(filename, "rb");
   if(in == NULL)
   {
+    perror("Can't open file, exiting\n");
     exit(-1);
   }
   // reading e_lfnew value
-  if(fseek(in, 0x3c, SEEK_SET) != -1)
-  {
-    val = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
-    file->PE_offset = val;
-  }
+  file->PE_offset = get_elfnew(in);
 
   // PE's signature, Machine and number of sections
   if(fseek(in, file->PE_offset, SEEK_SET) != -1)
   {
-    file->sig[0] = fgetc(in);
-    file->sig[1] = fgetc(in);
-    file->sig[2] = fgetc(in);
-    file->sig[3] = fgetc(in);
-    //file.sig[4] = '\0';
-
-    val = fgetc(in) | (fgetc(in)<<8);
-
-    file->machine = val;
-    file->sections = fgetc(in) | (fgetc(in)<<8);
+    file->sig = get_Sig(in);
+    file->machine = get16_le(in);
+    file->sections = get16_le(in);
   }
 
 // SizeOfOptionalHeader and Characteristics
   if(fseek(in, file->PE_offset+20, SEEK_SET) != -1)
   {
-    val = fgetc(in) | (fgetc(in)<<8);
-    file->optionalHeaderSize = val;
-
-    val = fgetc(in) | (fgetc(in)<<8);
-    file->characteristics = val;
-
-    val = fgetc(in) | (fgetc(in)<<8);
-    file->optionalImage = val;
+    file->optionalHeaderSize = get16_le(in);;
+    file->characteristics = get16_le(in);;
+    file->optionalImage = get16_le(in);;
   }
 
   // reading Address of EntryPoint and ImageBase
   if(fseek(in, 14, SEEK_CUR) != -1)
   {
-    val = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
-    file->EntryPoint = val;
+    file->EntryPoint = get32_le(in);
   }
 
   if(file->optionalImage == OPTIONAL_IMAGE_64)
   {
     fseek(in, 4, SEEK_CUR);
-    file->ImageBase = (int64_t)fgetc(in) | ((int64_t)fgetc(in)<<8) |
-                      ((int64_t)fgetc(in)<<16) | ((int64_t)fgetc(in)<<24)
-                      | ( (int64_t)fgetc(in)<<32) | ( (int64_t)fgetc(in)<<40)
-                      | ( (int64_t)fgetc(in)<<48) | ((int64_t)fgetc(in)<<54);
+    file->ImageBase = get64_le(in);
     fclose(in);
     return;
   }
 
   if(fseek(in, 8, SEEK_CUR) != -1)
   {
-    val = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
-    file->ImageBase = val;
+    file->ImageBase = get32_le(in);
   }
 
   fclose(in);

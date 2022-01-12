@@ -11,7 +11,7 @@
 typedef struct pe_file
 {
   int   PE_offset;      // PE offset
-  char  sig[4];         // PE signature
+  char  *sig;         // PE signature
   int   machine;        // Machine type ARM/MIPS/Intel
   int   sections;       // Number of Sections
   int   characteristics;          // Characteristics
@@ -22,9 +22,14 @@ typedef struct pe_file
 } pe_file;
 
 // functions
-void print_info(pe_file *file);
-void read_pe(char *filename, pe_file *file);
-
+void      print_info(pe_file *file);
+void      read_pe(char *filename, pe_file *file);
+void      read_OpionalHeader(FILE *in);
+char     *get_Sig(FILE *in);
+uint8_t   get_elfnew(FILE *in);
+uint16_t  get16_le(FILE *in);
+uint32_t  get32_le(FILE *in);
+uint64_t  get64_le(FILE *in);
 
 // Machine types
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types
