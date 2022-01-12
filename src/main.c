@@ -1,9 +1,6 @@
-/*
- *
- *
-*/
+// main.c:
 
-#include "pe-header.h"
+#include "pe_header.h"
 
 int main(int argc, char* argv[])
 {

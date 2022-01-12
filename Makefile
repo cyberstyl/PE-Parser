@@ -4,11 +4,11 @@ ARGS= -Wall -O1
 SRC= ./src
 BUILD= ./build
 
-default: pe-interface.o
-	${CC} ${ARGS} -o perser ${BUILD}/pe-interface.o ${SRC}/main.c
+default: pe_interface.o
+	${CC} ${ARGS} -o perser ${BUILD}/pe_interface.o ${SRC}/main.c
 
-pe-interface.o:
-	${CC} ${ARGS} -c ${SRC}/pe-interface.c -o ${BUILD}/pe-interface.o
+pe_interface.o:
+	${CC} ${ARGS} -c ${SRC}/pe_interface.c -o ${BUILD}/pe_interface.o
 
 format:
 	astyle --style=allman --indent=spaces=2 --max-code-length=65 *.c

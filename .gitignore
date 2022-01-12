@@ -1,3 +1,4 @@
 .vscode
 perser
 pe-interface.o
+build/pe_interface.o

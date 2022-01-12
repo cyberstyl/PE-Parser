@@ -1,34 +1,43 @@
-#include "pe-header.h"
+// pe-interface.c: 
+//    contains functions that deals with PE structures
+//    reading PE values and saving them in a struct.
+#include "pe_header.h"
 
+// 
 void print_info(pe_file *file)
 {
   printf("Signature:             %s\n", file->sig);
   switch (file->machine)
   {
-  case 332:
+  case IMAGE_FILE_MACHINE_I386:
     printf("Machine:               Intel 386 \n");
     break;
-  case 0x8664:
+  case IMAGE_FILE_MACHINE_AMD64:
     printf("Machine:               x64 \n");
     break;
 
   default:
     printf("Machine:             unknown \n");
   }
-  printf("Number of Sections:     %d\n", file->sections);
-  printf("OptionalHeader size:    0x%x\n",
+  printf("Number of Sections:    %d\n", file->sections);
+  printf("OptionalHeader size:   0x%x\n",
          file->optionalHeaderSize);
-  printf("Characteristics:        0x%x\n",
-         file->characteristics);
+  
+  printf("Characteristics:       ");
+  if( file->characteristics & (IMAGE_FILE_DLL) ){
+    printf("DLL \n");
+  } else if(file->characteristics & (IMAGE_FILE_EXECUTABLE_IMAGE) ){
+    printf("EXE \n");
+  }
 
   switch (file->optionalImage)
   {
   case 0x10b:
-    printf("Optional Image header:  0x%x PE (32 bit) \n",
+    printf("Optional Image header: 0x%x PE (32 bit) \n",
            file->optionalImage);
     break;
   case 0x20b:
-    printf("Optional Image header:  0x%x PE+ (64 bit) \n",
+    printf("Optional Image header: 0x%x PE+ (64 bit) \n",
            file->optionalImage);
     break;
 
