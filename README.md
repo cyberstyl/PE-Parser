@@ -13,11 +13,13 @@ $ make
 ```
 $ ./perser example-file.exe
 Signature:             PE
-Machine:               x64 
-Number of Sections:     6
-OptionalHeader size:    0xf0
-Characteristics:        0xc22
-Optional Image header:  0x20b PE+ (64 bit)
+Machine:               Intel 386 
+Number of Sections:    7
+OptionalHeader size:   224 (0xe0)
+Characteristics:       DLL 
+Optional Image header: 0x10b PE (32 bit) 
+Address of EntryPoint: 0x285440 (0x10285440) 
+Image Base:            0x10000000 
 
 ```
 
