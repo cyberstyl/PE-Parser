@@ -28,7 +28,11 @@ Image Base:            0x10000000
 - [x] Determine PE file type (PE / PE+)
 - [x] Find and Print address of EntryPoint 
 - [ ] Read and print PE sections
-- [ ] Replce fgetc() functions with appropriate functions
+- [ ] Replce fgetc() functions with appropriate functions (get16_le(),get32_le()...etc)
+- [ ] Implement functions to ouput parse-able text (for example, csv)
+- [ ] Read Basic Data Directory info
+- [ ] Read imported functions (by name)
+- [ ] Read imported functions (by ordinal)
 - [ ] Create Separate functions to read PE info
 - [ ] Improve the code's read-ability
 
