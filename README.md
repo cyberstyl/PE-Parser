@@ -26,7 +26,7 @@ Image Base:            0x10000000
 ## Resources
 During the making of this program I've used:
 - [Microsoft PE format documentation](
-https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types)
+https://docs.microsoft.com/en-us/windows/win32/debug/pe-format)
 - [Ange Albertini's Visual PE101 documentation of the PE format](
 https://github.com/corkami/pics/tree/master/binary/pe101)
 
