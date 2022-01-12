@@ -16,7 +16,7 @@ Signature:             PE
 Machine:               Intel 386 
 Number of Sections:    7
 OptionalHeader size:   224 (0xe0)
-Characteristics:       DLL 
+Characteristics:       EXE 
 Optional Image header: 0x10b PE (32 bit) 
 Address of EntryPoint: 0x285440 (0x10285440) 
 Image Base:            0x10000000 
