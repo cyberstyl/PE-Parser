@@ -23,12 +23,20 @@ Image Base:            0x10000000
 
 ```
 
+## Resources
+During the making of this program I've relied heavily on:
+- Microsoft PE format documentation:
+https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types
+- Ange Albertini's Visual PE101 documentation of the PE format:
+https://github.com/corkami/pics/tree/master/binary/pe101
+
+
 ## To-do list / Progress
 - [x] Find and read PE info
 - [x] Determine PE file type (PE / PE+)
 - [x] Find and Print address of EntryPoint 
 - [ ] Read and print PE sections
-- [ ] Replce fgetc() functions with appropriate functions (get16_le(),get32_le()...etc)
+- [ ] Replce fgetc() functions with appropriate functions (get16_le(), get32_le()...etc)
 - [ ] Implement functions to ouput parse-able text (for example, csv)
 - [ ] Read Basic Data Directory info
 - [ ] Read imported functions (by name)
