@@ -35,13 +35,15 @@ https://github.com/corkami/pics/tree/master/binary/pe101)
 - [x] Find and read PE info
 - [x] Determine PE file type (PE / PE+)
 - [x] Find and Print address of EntryPoint 
-- [ ] Read and print PE sections (name, size, permissions)
 - [x] Replce use of fgetc() functions for reading integers with  get16_le(), get32_le()...etc
+- [ ] Read and print PE sections (name, size, permissions)
 - [ ] Implement functions to ouput parse-able text (for example, csv)
 - [ ] Read Basic Data Directory info
 - [ ] Read imported functions (by name)
 - [ ] Read imported functions (by ordinal)
 - [ ] Create Separate functions to read PE info
+- [ ] Add ability to read all PE files in a current or given directory
+- [ ] Add ability to search for and handle PE files recursively
 - [ ] Improve the code's read-ability
 - [ ] Create separate structure for OptionalHeader
 

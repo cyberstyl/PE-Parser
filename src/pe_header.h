@@ -39,16 +39,21 @@ typedef struct OptionalHeader{
 
 } OptionalHeader;
 
-// functions
+// functions to output PE info
 void      print_info(pe_file *file);
+void      print_characteristics(uint16_t ch);
+
+// functions to read from FILE stream
 void      read_pe(char *filename, pe_file *file);
 void      read_OpionalHeader(FILE *in);
-void      print_characteristics(uint16_t ch);
-char     *get_Sig(FILE *in);
-uint32_t   get_elfnew(FILE *in);
-uint16_t  get16_le(FILE *in);
-uint32_t  get32_le(FILE *in);
-uint64_t  get64_le(FILE *in);
+char     *read_Sig(FILE *in);
+uint32_t  read_elfnew(FILE *in);
+uint16_t  read16_le(FILE *in);
+uint32_t  read32_le(FILE *in);
+uint64_t  read64_le(FILE *in);
+
+// functions to read from PE object
+
 
 // Machine types
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types

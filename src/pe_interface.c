@@ -3,18 +3,18 @@
 //    read PE and save information in a struct.
 #include "pe_header.h"
 
-uint32_t   get_elfnew(FILE *in){
+uint32_t   read_elfnew(FILE *in){
   uint32_t value;
   if(fseek(in, 0x3c, SEEK_SET) != -1)
   {
-    value = get32_le(in);
+    value = read32_le(in);
   } else {
     return 0;
   }
   return value;
 }
 
-char *get_Sig(FILE *in){
+char *read_Sig(FILE *in){
   char *ch;
   ch = malloc( sizeof(char) * 4);
   ch[0] = fgetc(in);
@@ -88,19 +88,19 @@ void print_characteristics(uint16_t ch){
 
 }
 
-uint16_t  get16_le(FILE *in){
+uint16_t  read16_le(FILE *in){
   uint16_t value;
   value = fgetc(in) | (fgetc(in)<<8);
   return value;
 }
 
-uint32_t  get32_le(FILE *in){
+uint32_t  read32_le(FILE *in){
   uint32_t value;
   value = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24) ;
   return value;
 }
 
-uint64_t  get64_le(FILE *in){
+uint64_t  read64_le(FILE *in){
   uint64_t value;
   value = (uint64_t)fgetc(in) | ((uint64_t)fgetc(in)<<8) |
                       ((uint64_t)fgetc(in)<<16) | ((uint64_t)fgetc(in)<<24)
@@ -162,41 +162,41 @@ void read_pe(char *filename, pe_file *file)
     exit(-1);
   }
   // reading e_lfnew value
-  file->PE_offset = get_elfnew(in);
+  file->PE_offset = read_elfnew(in);
 
   // PE's signature, Machine and number of sections
   if(fseek(in, file->PE_offset, SEEK_SET) != -1)
   {
-    file->sig = get_Sig(in);
-    file->machine = get16_le(in);
-    file->numberOfSections = get16_le(in);
+    file->sig = read_Sig(in);
+    file->machine = read16_le(in);
+    file->numberOfSections = read16_le(in);
   }
 
 // SizeOfOptionalHeader and Characteristics
   if(fseek(in, file->PE_offset+20, SEEK_SET) != -1)
   {
-    file->optionalHeaderSize = get16_le(in);
-    file->characteristics = get16_le(in);
-    file->optionalImage = get16_le(in);
+    file->optionalHeaderSize = read16_le(in);
+    file->characteristics = read16_le(in);
+    file->optionalImage = read16_le(in);
   }
 
   // reading Address of EntryPoint and ImageBase
   if(fseek(in, 14, SEEK_CUR) != -1)
   {
-    file->EntryPoint = get32_le(in);
+    file->EntryPoint = read32_le(in);
   }
 
   if(file->optionalImage == OPTIONAL_IMAGE_64)
   {
     fseek(in, 4, SEEK_CUR);
-    file->ImageBase = get64_le(in);
+    file->ImageBase = read64_le(in);
     fclose(in);
     return;
   }
 
   if(fseek(in, 8, SEEK_CUR) != -1)
   {
-    file->ImageBase = get32_le(in);
+    file->ImageBase = read32_le(in);
   }
 
   fclose(in);
