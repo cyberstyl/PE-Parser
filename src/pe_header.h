@@ -1,5 +1,6 @@
 // pe_header.h
 //    Definitions and declarations for PE module
+//
 #ifndef PE_HEADER_H
 #define PE_HEADER_H
 
@@ -19,7 +20,7 @@ typedef struct optional_header{
   uint32_t  entryPoint;
   uint32_t  baseOfCode;
   uint32_t  baseOfData;
-  uint32_t  imageBase;
+  uint64_t  imageBase;
   uint32_t  sectionAlignment;
   uint32_t  fileAlignment;
   uint16_t  majorOSVer;
@@ -34,10 +35,10 @@ typedef struct optional_header{
   uint32_t 	checkSum; 			
   uint16_t 	subsystem; 			
   uint16_t 	dllCharacteristics; 	
-  uint32_t 	sizeOfStackReserve; 	
-  uint32_t 	sizeOfStackCommit; 	
-  uint32_t 	sizeOfHeapReserve; 	
-  uint32_t 	sizeOfHeapCommit; 	
+  uint64_t 	sizeOfStackReserve; 	
+  uint64_t 	sizeOfStackCommit; 	
+  uint64_t 	sizeOfHeapReserve; 	
+  uint64_t 	sizeOfHeapCommit; 	
   uint32_t 	loaderFlags; 		
   uint32_t 	numberOfRvaAndSizes;
 } optional_header;
@@ -50,7 +51,7 @@ typedef struct pe_header{
   uint16_t   machine; 
   uint16_t   numberOfSections;
   uint32_t   timeStamp;
-  uint32_t   SymTablPtr;
+  uint32_t   symTablePtr;
   uint32_t   numberOfSym;
   uint16_t   optionalHeaderSize;
   uint16_t   characteristics;
@@ -69,6 +70,8 @@ void print_info(dos_header *dosHeader);
 void print_characteristics(uint16_t ch);
 void print_machine(uint16_t mach);
 void print_magic(uint16_t magic);
+void print_subsystem(uint16_t system);
+void print_dllcharacteristics(uint16_t ch);
 
 // functions to read from FILE stream
 void      read_pe(char *filename, dos_header *dosHeader);
@@ -114,4 +117,36 @@ uint64_t  read64_le(FILE *in);
 // PE optional image
 #define OPTIONAL_IMAGE_PE32      0x10b
 #define OPTIONAL_IMAGE_PE32_plus 0x20b
+
+
+// Image subsystem
+#define IMAGE_SUBSYSTEM_UNKNOWN   		  	0   		//  An unknown subsystem
+#define IMAGE_SUBSYSTEM_NATIVE    		  	1   		//  Device drivers and native Windows processes
+#define IMAGE_SUBSYSTEM_WINDOWS_GUI     	2  		 	//  The Windows graphical user interface (GUI) subsystem
+#define IMAGE_SUBSYSTEM_WINDOWS_CUI     	3  		 	//  The Windows character subsystem
+#define IMAGE_SUBSYSTEM_OS2_CUI     	  	5    		//  The OS/2 character subsystem
+#define IMAGE_SUBSYSTEM_POSIX_CUI     		7    		//	The Posix character subsystem
+#define IMAGE_SUBSYSTEM_NATIVE_WINDOWS    8  	    //  Native Win9x driver
+#define IMAGE_SUBSYSTEM_WINDOWS_CE_GUI   	9   		//  Windows CE
+#define IMAGE_SUBSYSTEM_EFI_APPLICATION   10   		//  An Extensible Firmware Interface (EFI) application
+#define IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER    11  //  An EFI driver with boot services
+#define IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER     	  12  // 	An EFI driver with run-time services
+#define IMAGE_SUBSYSTEM_EFI_ROM     		13      	    	//	An EFI ROM image
+#define IMAGE_SUBSYSTEM_XBOX     			  14              //  XBOX
+#define IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION    16  //  Windows boot application. 
+
+
+// Characteristics
+#define IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA   0x0020   // Image can handle a high entropy 64-bit virtual address space.
+#define IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE      0x0040   // DLL can be relocated at load time.
+#define IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY   0x0080   // Code Integrity checks are enforced.
+#define IMAGE_DLLCHARACTERISTICS_NX_COMPAT         0x0100   // Image is NX compatible.
+#define IMAGE_DLLCHARACTERISTICS_NO_ISOLATION      0x0200   // Isolation aware, but do not isolate the image.
+#define IMAGE_DLLCHARACTERISTICS_NO_SEH            0x0400   // Does not use structured exception (SE) handling. No SE handler may be called in this image.
+#define IMAGE_DLLCHARACTERISTICS_NO_BIND           0x0800   // Do not bind the image.
+#define IMAGE_DLLCHARACTERISTICS_APPCONTAINER      0x1000   // Image must execute in an AppContainer.
+#define IMAGE_DLLCHARACTERISTICS_WDM_DRIVER        0x2000   // A WDM driver.
+#define IMAGE_DLLCHARACTERISTICS_GUARD_CF          0x4000   // Image supports Control Flow Guard.
+#define IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE   0x8000  // Terminal Server aware. 
+
 #endif
