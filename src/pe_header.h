@@ -7,52 +7,78 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-// PE header
-typedef struct pe_file
-{
-  int   PE_offset;               // PE offset
-  char  *sig;                    // PE signature
-  uint16_t   machine;            // Machine type ARM/MIPS/Intel
-  uint16_t   numberOfSections;   // Number of Sections
-  uint32_t   timeStamp;          // time date stamp
-  uint32_t   SymTablPtr;         // Pointer to symbol table
-  uint32_t   numberOfSym;        // number of symbols
-  uint16_t   optionalHeaderSize; // Optional Header Size
-  uint16_t   characteristics;    // Characteristics
-
-  int   optionalImage;           // Optional Image Header
-  int   EntryPoint;
-  int64_t    ImageBase;
-} pe_file;
-
 
 // Optional Header Image
-typedef struct OptionalHeader{
+typedef struct optional_header{
   uint16_t  magic;  
   uint8_t   majorLinkerVer;
   uint8_t   minorLinkerVer;
   uint32_t  sizeOfCode;
   uint32_t  sizeOfInitializedData;
   uint32_t  sizeOfUninitializedData;
-  uint32_t  EntryPoint;
+  uint32_t  entryPoint;
   uint32_t  baseOfCode;
+  uint32_t  baseOfData;
+  uint32_t  imageBase;
+  uint32_t  sectionAlignment;
+  uint32_t  fileAlignment;
+  uint16_t  majorOSVer;
+  uint16_t  minorOSVer;
+  uint16_t 	majorImageVer; 	
+  uint16_t 	minorImageVer;	
+  uint16_t 	majorSubsystemVer; 
+  uint16_t 	minorSubsystemVer; 
+  uint32_t 	win32VersionVal; 	
+  uint32_t 	sizeOfImage; 		
+  uint32_t 	sizeOfHeaders; 		
+  uint32_t 	checkSum; 			
+  uint16_t 	subsystem; 			
+  uint16_t 	dllCharacteristics; 	
+  uint32_t 	sizeOfStackReserve; 	
+  uint32_t 	sizeOfStackCommit; 	
+  uint32_t 	sizeOfHeapReserve; 	
+  uint32_t 	sizeOfHeapCommit; 	
+  uint32_t 	loaderFlags; 		
+  uint32_t 	numberOfRvaAndSizes;
+} optional_header;
 
-} OptionalHeader;
+
+// PE header
+typedef struct pe_header{
+  uint32_t   peOffset; 
+  uint32_t   signature;   
+  uint16_t   machine; 
+  uint16_t   numberOfSections;
+  uint32_t   timeStamp;
+  uint32_t   SymTablPtr;
+  uint32_t   numberOfSym;
+  uint16_t   optionalHeaderSize;
+  uint16_t   characteristics;
+  optional_header *optionalHeader;
+} pe_header;
+
+// DOS header
+typedef struct dos_header{
+  uint16_t magic;
+  uint32_t e_lfanew;
+  pe_header *pe;
+}dos_header;
 
 // functions to output PE info
-void      print_info(pe_file *file);
-void      print_characteristics(uint16_t ch);
+void print_info(dos_header *dosHeader);
+void print_characteristics(uint16_t ch);
+void print_machine(uint16_t mach);
+void print_magic(uint16_t magic);
 
 // functions to read from FILE stream
-void      read_pe(char *filename, pe_file *file);
+void      read_pe(char *filename, dos_header *dosHeader);
 void      read_OpionalHeader(FILE *in);
 char     *read_Sig(FILE *in);
 uint32_t  read_elfnew(FILE *in);
+uint16_t  read8_le(FILE *in);
 uint16_t  read16_le(FILE *in);
 uint32_t  read32_le(FILE *in);
 uint64_t  read64_le(FILE *in);
-
-// functions to read from PE object
 
 
 // Machine types
@@ -86,6 +112,6 @@ uint64_t  read64_le(FILE *in);
 #define IMAGE_FILE_BYTES_REVERSED_HI       		0x8000
 
 // PE optional image
-#define OPTIONAL_IMAGE_32 0x10b
-#define OPTIONAL_IMAGE_64 0x20b
+#define OPTIONAL_IMAGE_PE32      0x10b
+#define OPTIONAL_IMAGE_PE32_plus 0x20b
 #endif
