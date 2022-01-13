@@ -3,8 +3,8 @@
 //    read PE and save information in a struct.
 #include "pe_header.h"
 
-uint8_t   get_elfnew(FILE *in){
-  uint8_t value;
+uint32_t   get_elfnew(FILE *in){
+  uint32_t value;
   if(fseek(in, 0x3c, SEEK_SET) != -1)
   {
     value = get32_le(in);
@@ -22,6 +22,70 @@ char *get_Sig(FILE *in){
   ch[2] = fgetc(in);
   ch[3] = fgetc(in);
   return ch;
+}
+
+void print_characteristics(uint16_t ch){
+  if( ch & (IMAGE_FILE_DLL) )
+  {
+    printf("     IMAGE_FILE_DLL \n");
+  } 
+  if(ch & (IMAGE_FILE_EXECUTABLE_IMAGE) )
+  {
+    printf("     IMAGE_FILE_EXECUTABLE_IMAGE \n");
+  }
+  if(ch & (IMAGE_FILE_DEBUG_STRIPPED) )
+  {
+    printf("     IMAGE_FILE_DEBUG_STRIPPED\n");
+  }
+  if(ch & (IMAGE_FILE_RELOCS_STRIPPED) )
+  {
+    printf("     IMAGE_FILE_RELOCS_STRIPPED\n");
+  }
+  if(ch & (IMAGE_FILE_LINE_NUMS_STRIPPED) )
+  {
+    printf("     IMAGE_FILE_LINE_NUMS_STRIPPED\n");
+  }  
+  if(ch & (IMAGE_FILE_LOCAL_SYMS_STRIPPED) )
+  {
+    printf("     IMAGE_FILE_LOCAL_SYMS_STRIPPED\n");
+  }
+  if(ch & (IMAGE_FILE_AGGRESSIVE_WS_TRIM) )
+  {
+    printf("     IMAGE_FILE_AGGRESSIVE_WS_TRIM\n");
+  }
+  if(ch & (IMAGE_FILE_LARGE_ADDRESS_AWARE) )
+  {
+    printf("     IMAGE_FILE_LARGE_ADDRESS_AWARE\n");
+  }
+  if(ch & (IMAGE_FILE_BYTES_REVERSED_LO) )
+  {
+    printf("     IMAGE_FILE_BYTES_REVERSED_LO\n");
+  }  
+  if(ch & (IMAGE_FILE_32BIT_MACHINE) )
+  {
+    printf("     IMAGE_FILE_32BIT_MACHINE\n");
+  }  
+  if(ch & (IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP) )
+  {
+    printf("     IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP\n");
+  } 
+  if(ch & (IMAGE_FILE_NET_RUN_FROM_SWAP) )
+  {
+    printf("     IMAGE_FILE_NET_RUN_FROM_SWAP\n");
+  } 
+  if(ch & (IMAGE_FILE_SYSTEM) )
+  {
+    printf("     IMAGE_FILE_SYSTEM\n");
+  }
+  if(ch & (IMAGE_FILE_BYTES_REVERSED_HI) )
+  {
+    printf("     IMAGE_FILE_BYTES_REVERSED_HI\n");
+  }
+  if(ch & (IMAGE_FILE_UP_SYSTEM_ONLY) )
+  {
+    printf("     IMAGE_FILE_UP_SYSTEM_ONLY\n");
+  }    
+
 }
 
 uint16_t  get16_le(FILE *in){
@@ -60,24 +124,12 @@ void print_info(pe_file *file)
   default:
     printf("Machine:             unknown \n");
   }
-  printf("Number of Sections:    %d\n", file->sections);
+  printf("Number of Sections:    %d\n", file->numberOfSections);
   printf("OptionalHeader size:   %d (0x%x)\n",
          file->optionalHeaderSize, file->optionalHeaderSize);
 
-  printf("Characteristics:       ");
-  if( file->characteristics & (IMAGE_FILE_DLL) )
-  {
-    printf("DLL \n");
-  }
-  else if(file->characteristics & (IMAGE_FILE_EXECUTABLE_IMAGE) )
-  {
-    printf("EXE \n");
-  }
-  if(file->characteristics & (IMAGE_FILE_DEBUG_STRIPPED) )
-  {
-    printf("                       Stripped Debug info\n");
-  }
-
+  printf("Characteristics:       0x%X\n", file->characteristics);
+  //print_characteristics(file->characteristics);
 
   switch (file->optionalImage)
   {
@@ -117,15 +169,15 @@ void read_pe(char *filename, pe_file *file)
   {
     file->sig = get_Sig(in);
     file->machine = get16_le(in);
-    file->sections = get16_le(in);
+    file->numberOfSections = get16_le(in);
   }
 
 // SizeOfOptionalHeader and Characteristics
   if(fseek(in, file->PE_offset+20, SEEK_SET) != -1)
   {
-    file->optionalHeaderSize = get16_le(in);;
-    file->characteristics = get16_le(in);;
-    file->optionalImage = get16_le(in);;
+    file->optionalHeaderSize = get16_le(in);
+    file->characteristics = get16_le(in);
+    file->optionalImage = get16_le(in);
   }
 
   // reading Address of EntryPoint and ImageBase
