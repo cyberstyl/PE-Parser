@@ -258,7 +258,7 @@ void print_subsystem(uint16_t system){
   }
 }
 
-uint16_t  read8_le(FILE *in){
+uint8_t  read8_le(FILE *in){
   uint8_t value;
   value = fgetc(in);
   return value;
@@ -354,7 +354,7 @@ void print_info(char *argv, dos_header *dosHeader)
 
 void read_pe(char *filename, dos_header *dosHeader)
 {
-  FILE *in;
+  FILE *in = NULL;
   in = fopen(filename, "rb");
 
   if(in == NULL)

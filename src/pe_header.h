@@ -78,7 +78,7 @@ void      read_pe(char *filename, dos_header *dosHeader);
 void      read_OpionalHeader(FILE *in);
 char     *read_Sig(FILE *in);
 uint32_t  read_elfnew(FILE *in);
-uint16_t  read8_le(FILE *in);
+uint8_t  read8_le(FILE *in);
 uint16_t  read16_le(FILE *in);
 uint32_t  read32_le(FILE *in);
 uint64_t  read64_le(FILE *in);
