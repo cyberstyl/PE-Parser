@@ -15,7 +15,7 @@ typedef struct data_directory{
 }data_directory;
 
 // Optional Header Image
-typedef struct optional_header{
+typedef struct optional_header_t{
   uint16_t  magic;  
   uint8_t   majorLinkerVer;
   uint8_t   minorLinkerVer;
@@ -47,11 +47,11 @@ typedef struct optional_header{
   uint32_t 	loaderFlags; 		
   uint32_t 	numberOfRvaAndSizes;
   data_directory *data_directory;
-} optional_header;
+} optional_header_t;
 
 
 // PE header
-typedef struct pe_header{
+typedef struct pe_header_t{
   uint32_t   peOffset; 
   uint32_t   signature;   
   uint16_t   machine; 
@@ -61,18 +61,18 @@ typedef struct pe_header{
   uint32_t   numberOfSym;
   uint16_t   optionalHeaderSize;
   uint16_t   characteristics;
-  optional_header *optionalHeader;
-} pe_header;
+  optional_header_t *optionalHeader;
+} pe_header_t;
 
 // DOS header
-typedef struct dos_header{
+typedef struct dos_header_t{
   uint16_t magic;
   uint32_t e_lfanew;
-  pe_header *pe;
-}dos_header;
+  pe_header_t *pe;
+}dos_header_t;
 
 // functions to output PE info
-void print_info(char *argv, dos_header *dosHeader);
+void print_info(char *argv, dos_header_t *dosHeader);
 void print_characteristics(uint16_t ch);
 void print_machine(uint16_t mach);
 void print_magic(uint16_t magic);
@@ -80,11 +80,11 @@ void print_subsystem(uint16_t system);
 void print_dllcharacteristics(uint16_t ch);
 
 // functions to read from FILE stream
-void      read_pe(char *filename, dos_header *dosHeader);
+void      read_pe(char *filename, dos_header_t *dosHeader);
 void      read_OpionalHeader(FILE *in);
 char     *read_Sig(FILE *in);
 uint32_t  read_elfnew(FILE *in);
-uint8_t  read8_le(FILE *in);
+uint8_t   read8_le(FILE *in);
 uint16_t  read16_le(FILE *in);
 uint32_t  read32_le(FILE *in);
 uint64_t  read64_le(FILE *in);

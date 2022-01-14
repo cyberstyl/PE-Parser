@@ -11,9 +11,9 @@ int main(int argc, char* argv[])
     exit(1);
   }
 
-  dos_header dosHeader;
-  pe_header peHeader;
-  optional_header optionalHeader;
+  dos_header_t dosHeader;
+  pe_header_t peHeader;
+  optional_header_t optionalHeader;
 
   dosHeader.pe = &peHeader;
   peHeader.optionalHeader = &optionalHeader;

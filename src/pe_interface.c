@@ -288,9 +288,9 @@ uint64_t  read64_le(FILE *in)
   return value;
 }
 
-void print_info(char *argv, dos_header *dosHeader)
+void print_info(char *argv, dos_header_t *dosHeader)
 {
-  pe_header *file;
+  pe_header_t *file;
   file = dosHeader->pe;
   
   printf("\n\nFile: %s\n", argv);
@@ -352,7 +352,7 @@ void print_info(char *argv, dos_header *dosHeader)
   
 }
 
-void read_pe(char *filename, dos_header *dosHeader)
+void read_pe(char *filename, dos_header_t *dosHeader)
 {
   FILE *in = NULL;
   in = fopen(filename, "rb");
@@ -430,6 +430,8 @@ void read_pe(char *filename, dos_header *dosHeader)
     }
     dosHeader->pe->optionalHeader->loaderFlags         = read32_le(in);
     dosHeader->pe->optionalHeader->numberOfRvaAndSizes = read32_le(in);
+
+
   }
 
 
