@@ -274,6 +274,16 @@ void print_subsystem(uint16_t system){
   }
 }
 
+char *read_str(FILE *in, int count){
+  char *ch = malloc(sizeof(char)*count);
+  char str_ch[0];
+  for(int i = 0; i < count; i++){
+    str_ch[0] = fgetc(in);
+    strcat(ch, str_ch);
+  }
+  return ch;
+}
+
 uint8_t  read8_le(FILE *in){
   uint8_t value;
   value = fgetc(in);
@@ -369,11 +379,21 @@ void print_info(char *argv, dos_header_t *dosHeader)
   printf("\n========================\n");
   printf("Data Tables \n");
   for(int i = 0; i < 16; i++){
-    printf("%s:\n", dataTable[i]);
-    printf("      Virtual Address: %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr);
-    printf("      Size:            %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].size);
+      printf("%s:\n", dataTable[i]);
+      printf("      Virtual Address: %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr);
+      printf("      Size:            %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].size);
   }  
-  
+
+  printf("\n========================\n");
+  printf("Sections: \n");
+
+  for(int i = 0; i < dosHeader->pe->numberOfSections ;i++ ){
+      printf("   Name: %s\n", dosHeader->pe->section_table[i].name );
+      printf("       VirtualAddress: %x\n", dosHeader->pe->section_table[i].virtualAddr );
+      printf("       VirtualSize:    %x\n", dosHeader->pe->section_table[i].virtualSize );
+      printf("       SizeOfRawData:  %x\n", dosHeader->pe->section_table[i].sizeOfRawData );
+  }
+
 }
 
 void read_pe(char *filename, dos_header_t *dosHeader)
@@ -456,10 +476,24 @@ void read_pe(char *filename, dos_header_t *dosHeader)
     dosHeader->pe->optionalHeader->numberOfRvaAndSizes = read32_le(in);
     
     for(int i = 0; i < 16; i++){
-      dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr = read32_le(in);
-      dosHeader->pe->optionalHeader->dataDirectory[i].size = read32_le(in);
+        dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr = read32_le(in);
+        dosHeader->pe->optionalHeader->dataDirectory[i].size = read32_le(in);
     }
-
+    
+    dosHeader->pe->section_table = malloc(sizeof(section_table_t) * 
+                         dosHeader->pe->numberOfSections);
+    for(int i = 0; i < dosHeader->pe->numberOfSections; i++){
+        dosHeader->pe->section_table[i].name = read_str(in, 8);
+        dosHeader->pe->section_table[i].virtualSize = read32_le(in);
+        dosHeader->pe->section_table[i].virtualAddr = read32_le(in);
+        dosHeader->pe->section_table[i].sizeOfRawData = read32_le(in);
+        dosHeader->pe->section_table[i].ptrToRawData = read32_le(in);
+        dosHeader->pe->section_table[i].ptrToReloc = read32_le(in);
+        dosHeader->pe->section_table[i].ptrToLineNum= read32_le(in);
+        dosHeader->pe->section_table[i].numberOfReloc = read16_le(in);
+        dosHeader->pe->section_table[i].numberOfLineNum = read16_le(in);
+        dosHeader->pe->section_table[i].characteristics = read32_le(in);
+    }
   }
 
 

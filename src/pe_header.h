@@ -7,6 +7,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
+
+// section table
+typedef struct section_table_t{
+  char      *name;
+  uint32_t  virtualSize;
+  uint32_t  virtualAddr;
+  uint32_t  sizeOfRawData;
+  uint32_t  ptrToRawData;
+  uint32_t  ptrToReloc;
+  uint32_t  ptrToLineNum;
+  uint32_t  numberOfReloc;
+  uint32_t  numberOfLineNum;
+  uint32_t  characteristics;
+}section_table_t;
 
 // Data Directory 
 typedef struct data_directory_t{
@@ -52,16 +67,17 @@ typedef struct optional_header_t{
 
 // PE header
 typedef struct pe_header_t{
-  uint32_t   peOffset; 
-  uint32_t   signature;   
-  uint16_t   machine; 
-  uint16_t   numberOfSections;
-  uint32_t   timeStamp;
-  uint32_t   symTablePtr;
-  uint32_t   numberOfSym;
-  uint16_t   optionalHeaderSize;
-  uint16_t   characteristics;
+  uint32_t          peOffset; 
+  uint32_t          signature;   
+  uint16_t          machine; 
+  uint16_t          numberOfSections;
+  uint32_t          timeStamp;
+  uint32_t          symTablePtr;
+  uint32_t          numberOfSym;
+  uint16_t          optionalHeaderSize;
+  uint16_t          characteristics;
   optional_header_t *optionalHeader;
+  section_table_t   *section_table;
 } pe_header_t;
 
 // DOS header
@@ -83,7 +99,7 @@ void print_dllcharacteristics(uint16_t ch);
 // functions to read from FILE stream
 void      read_pe(char *filename, dos_header_t *dosHeader);
 void      read_OpionalHeader(FILE *in);
-char     *read_Sig(FILE *in);
+char     *read_str(FILE *in, int count);
 uint32_t  read_elfnew(FILE *in);
 uint8_t   read8_le(FILE *in);
 uint16_t  read16_le(FILE *in);
