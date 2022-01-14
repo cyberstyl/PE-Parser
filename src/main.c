@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
   dosHeader.pe = &peHeader;
   peHeader.optionalHeader = &optionalHeader;
 
-  for(int i = 0; i < argc; i++){
+  for(int i = 1; i < argc; i++){
     read_pe(argv[i], &dosHeader);
     print_info(argv[i], &dosHeader);
   }
