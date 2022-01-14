@@ -83,7 +83,7 @@ NumberOfRvaAndSizes:    0x10
 - [ ] Add code to read DOS header
 - [ ] Read and print PE sections (name, size, permissions)
 - [ ] Implement functions to output parse-able text (for example, csv)
-- [ ] Read basic DataDirectory info
+- [x] Read basic DataDirectory info
 - [ ] Read imported functions (by name)
 - [ ] Read imported functions (by ordinal)
 - [ ] Create Separate functions to read PE info

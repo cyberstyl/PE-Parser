@@ -6,10 +6,26 @@
 
 // Disable warning for fopen() under visual studio
 #ifdef _MSC_VER
-
 #pragma warning(disable:4996)
-
 #endif
+
+// DataTable Types
+char dataTable[][24] = { "Export Table",
+                      "Import Table",
+                      "Resource Table",
+                      "Exception Table",
+                      "Certificate Table",
+                      "Base Relocation Table",
+                      "Debug",
+                      "Architecture",
+                      "Global Ptr",
+                      "TLS Table",
+                      "Load Config Table",
+                      "Bound Import",
+                      "IAT",
+                      "Delay Import Descriptor",
+                      "CLR Runtime Header",
+                      "Reserved, must be zero"};
 
 uint32_t   read_elfnew(FILE *in)
 {
@@ -349,6 +365,14 @@ void print_info(char *argv, dos_header_t *dosHeader)
 
   printf("LoaderFlags:            0x%x\n", file->optionalHeader->loaderFlags);
   printf("NumberOfRvaAndSizes:    0x%x\n", file->optionalHeader->numberOfRvaAndSizes);
+
+  printf("\n========================\n");
+  printf("Data Tables \n");
+  for(int i = 0; i < 16; i++){
+    printf("%s:\n", dataTable[i]);
+    printf("      Virtual Address: %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr);
+    printf("      Size:            %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].size);
+  }  
   
 }
 
@@ -430,7 +454,11 @@ void read_pe(char *filename, dos_header_t *dosHeader)
     }
     dosHeader->pe->optionalHeader->loaderFlags         = read32_le(in);
     dosHeader->pe->optionalHeader->numberOfRvaAndSizes = read32_le(in);
-
+    
+    for(int i = 0; i < 16; i++){
+      dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr = read32_le(in);
+      dosHeader->pe->optionalHeader->dataDirectory[i].size = read32_le(in);
+    }
 
   }
 

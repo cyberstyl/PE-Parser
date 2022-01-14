@@ -9,10 +9,10 @@
 #include <stdint.h>
 
 // Data Directory 
-typedef struct data_directory{
+typedef struct data_directory_t{
   uint32_t virtualAddr;
   uint32_t size;
-}data_directory;
+}data_directory_t;
 
 // Optional Header Image
 typedef struct optional_header_t{
@@ -46,7 +46,7 @@ typedef struct optional_header_t{
   uint64_t 	sizeOfHeapCommit; 	
   uint32_t 	loaderFlags; 		
   uint32_t 	numberOfRvaAndSizes;
-  data_directory *data_directory;
+  data_directory_t dataDirectory[15];
 } optional_header_t;
 
 
@@ -70,6 +70,7 @@ typedef struct dos_header_t{
   uint32_t e_lfanew;
   pe_header_t *pe;
 }dos_header_t;
+
 
 // functions to output PE info
 void print_info(char *argv, dos_header_t *dosHeader);
