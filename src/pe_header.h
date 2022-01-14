@@ -8,6 +8,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+// Data Directory 
+typedef struct data_directory{
+  uint32_t virtualAddr;
+  uint32_t size;
+}data_directory;
 
 // Optional Header Image
 typedef struct optional_header{
@@ -41,6 +46,7 @@ typedef struct optional_header{
   uint64_t 	sizeOfHeapCommit; 	
   uint32_t 	loaderFlags; 		
   uint32_t 	numberOfRvaAndSizes;
+  data_directory *data_directory;
 } optional_header;
 
 
