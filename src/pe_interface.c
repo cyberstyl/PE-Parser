@@ -281,11 +281,12 @@ uint64_t  read64_le(FILE *in)
   return value;
 }
 
-void print_info(dos_header *dosHeader)
+void print_info(char *argv, dos_header *dosHeader)
 {
   pe_header *file;
   file = dosHeader->pe;
   
+  printf("\n\nFile: %s\n", argv);
   printf("\n=== PE header information ===\n");
   // PE header
   printf("Signature:        0x%x (%c%c) \n",  file->signature, 

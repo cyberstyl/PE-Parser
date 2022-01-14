@@ -66,7 +66,7 @@ typedef struct dos_header{
 }dos_header;
 
 // functions to output PE info
-void print_info(dos_header *dosHeader);
+void print_info(char *argv, dos_header *dosHeader);
 void print_characteristics(uint16_t ch);
 void print_machine(uint16_t mach);
 void print_magic(uint16_t magic);

@@ -84,7 +84,7 @@ NumberOfRvaAndSizes:    0x10
 - [ ] Read imported functions (by name)
 - [ ] Read imported functions (by ordinal)
 - [ ] Create Separate functions to read PE info
-- [ ] Add ability to read all PE files in a current or given directory
+- [x] Add ability to read all PE files in a current or given directory
 - [ ] Add ability to search for and handle PE files recursively
 - [ ] Improve the code's read-ability
     - [ ] Enforce consistent naming convention for struct members (for example objectName1)
