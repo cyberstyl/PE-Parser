@@ -3,6 +3,9 @@
 ## Introduction
 PErser (as in PE Parser) is a small program made as an exercise to read the PE format and print out relevant information contained in its header.
 
+Some of the files that use PE headers includes:
+.acm, .ax, .cpl, .dll, .drv, .efi, .exe, .mui, .ocx, .scr, .sys, .tsp
+
 
 ## Building / Compiling
 ```
@@ -96,3 +99,4 @@ During the making of this program I've used:
 https://docs.microsoft.com/en-us/windows/win32/debug/pe-format)
 - [Ange Albertini's Visual PE101 documentation of the PE format](
 https://github.com/corkami/pics/tree/master/binary/pe101)
+
