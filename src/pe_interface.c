@@ -4,6 +4,13 @@
 //
 #include "pe_header.h"
 
+// Disable warning for fopen() under visual studio
+#ifdef _MSC_VER
+
+#pragma warning(disable:4996)
+
+#endif
+
 uint32_t   read_elfnew(FILE *in)
 {
   uint32_t value;
@@ -359,7 +366,7 @@ void read_pe(char *filename, dos_header *dosHeader)
   // TODO: read DOS header
   //
   //
-  
+
   // reading e_lfnew value
   dosHeader->pe->peOffset = read_elfnew(in);
 
