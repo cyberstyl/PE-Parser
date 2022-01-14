@@ -319,7 +319,7 @@ void print_info(char *argv, dos_header_t *dosHeader)
   pe_header_t *file;
   file = dosHeader->pe;
   
-  printf("\n\nFile: %s\n", argv);
+  printf("\nFile: %s\n", argv);
   printf("\n=== PE header information ===\n");
   // PE header
   printf("Signature:        0x%x (%c%c) \n",  file->signature, 

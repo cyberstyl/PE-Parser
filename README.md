@@ -19,26 +19,28 @@ $ cd PErser/
 $ make
 $ ./perser ../samples-pe/explorer.exe
 
+File: ../samples-pe/pwcreator.exe
+
 === PE header information ===
-Signature:        0x4550 (PE)
+Signature:        0x4550 (PE) 
 Machine:          (8664)  IMAGE_FILE_MACHINE_AMD64
-number of sections:      8
-TimeDateStamp:           0x57899981
+number of sections:      6
+TimeDateStamp:           0x57899a17
 PointerToSymbolTable:    0x0
 NumberOfSymbols:         0
 Size of OpionalHeader:   0xf0
 Characteristics:         0x22
-     IMAGE_FILE_EXECUTABLE_IMAGE
+     IMAGE_FILE_EXECUTABLE_IMAGE 
      IMAGE_FILE_LARGE_ADDRESS_AWARE
 
 === Optional header standard fields ===
-Magic:      20b (PE+)
+Magic:      20b (PE+) 
 MajorLinkerVersion:      0xe
 MinorLinkerVersion:      0x0
-SizeOfCode:              0x1a8000
-SizeOfInitializedData:   0x2c4a00
-SizeOfUninitializedData: 0x200
-EntryPoint:       0x9eb60
+SizeOfCode:              0x59c00
+SizeOfInitializedData:   0x69e00
+SizeOfUninitializedData: 0x0
+EntryPoint:       0x52660
 BaseOfCode:       0x1000
 
 === Optional header windows-specific fields ===
@@ -52,23 +54,100 @@ MinorImageVersion:      0x0
 MajorSubsystemVersion:  0xa
 MinorSubsystemVersion:  0x0
 Win32VersionValue:      0x0
-SizeOfImage:            0x472000
+SizeOfImage:            0xc7000
 SizeOfHeaders:   0x400
-CheckSum:        0x482a3b
+CheckSum:        0xc5fb5
 Subsystem:    (2)   IMAGE_SUBSYSTEM_WINDOWS_GUI
 DllCharacteristics:        
-     IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
-     IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY
+     IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA  
+     IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE 
      IMAGE_DLLCHARACTERISTICS_NX_COMPAT
      IMAGE_DLLCHARACTERISTICS_GUARD_CF
      IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE
 SizeOfStackReserve:     0x80000
-SizeOfStackCommit:      0xe000
+SizeOfStackCommit:      0x2000
 SizeOfHeapReserve:      0x100000
 SizeOfHeapCommit:       0x1000
 LoaderFlags:            0x0
 NumberOfRvaAndSizes:    0x10
 
+========================
+Data Tables 
+Export Table:
+      Virtual Address: 0
+      Size:            0
+Import Table:
+      Virtual Address: 83020
+      Size:            17c
+Resource Table:
+      Virtual Address: 8f000
+      Size:            36190
+Exception Table:
+      Virtual Address: 8a000
+      Size:            4494
+Certificate Table:
+      Virtual Address: 0
+      Size:            0
+Base Relocation Table:
+      Virtual Address: c6000
+      Size:            f18
+Debug:
+      Virtual Address: 70af0
+      Size:            38
+Architecture:
+      Virtual Address: 0
+      Size:            0
+Global Ptr:
+      Virtual Address: 0
+      Size:            0
+TLS Table:
+      Virtual Address: 0
+      Size:            0
+Load Config Table:
+      Virtual Address: 5f020
+      Size:            d0
+Bound Import:
+      Virtual Address: 0
+      Size:            0
+IAT:
+      Virtual Address: 5f0f0
+      Size:            bf8
+Delay Import Descriptor:
+      Virtual Address: 0
+      Size:            0
+CLR Runtime Header:
+      Virtual Address: 0
+      Size:            0
+Reserved, must be zero:
+      Virtual Address: 0
+      Size:            0
+
+========================
+Sections: 
+   Name: .text
+       VirtualAddress: 1000
+       VirtualSize:    59a5a
+       SizeOfRawData:  59c00
+   Name: .rdata
+       VirtualAddress: 5b000
+       VirtualSize:    2a91c
+       SizeOfRawData:  2aa00
+   Name: .data
+       VirtualAddress: 86000
+       VirtualSize:    3a68
+       SizeOfRawData:  2e00
+   Name: .pdata
+       VirtualAddress: 8a000
+       VirtualSize:    4494
+       SizeOfRawData:  4600
+   Name: .rsrc
+       VirtualAddress: 8f000
+       VirtualSize:    36190
+       SizeOfRawData:  36200
+   Name: .reloc
+       VirtualAddress: c6000
+       VirtualSize:    f18
+       SizeOfRawData:  1000
 ```
 
 
