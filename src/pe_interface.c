@@ -356,6 +356,10 @@ void read_pe(char *filename, dos_header *dosHeader)
     exit(-1);
   }
 
+  // TODO: read DOS header
+  //
+  //
+  
   // reading e_lfnew value
   dosHeader->pe->peOffset = read_elfnew(in);
 

@@ -78,6 +78,7 @@ NumberOfRvaAndSizes:    0x10
 - [x] Replce use of fgetc() functions for reading integers with  get16_le(), get32_le()...etc
 - [x] Read OptionalHeader (standard) and windows-specific
 - [x] Create separate structure for OptionalHeader
+- [ ] Add code to read DOS header
 - [ ] Read and print PE sections (name, size, permissions)
 - [ ] Implement functions to output parse-able text (for example, csv)
 - [ ] Read basic DataDirectory info
