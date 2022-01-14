@@ -19,13 +19,13 @@ $ cd PErser/
 $ make
 $ ./perser ../samples-pe/explorer.exe
 
-File: ../samples-pe/pwcreator.exe
+File: ../samples-pe/explorer.exe
 
 === PE header information ===
 Signature:        0x4550 (PE) 
 Machine:          (8664)  IMAGE_FILE_MACHINE_AMD64
-number of sections:      6
-TimeDateStamp:           0x57899a17
+number of sections:      8
+TimeDateStamp:           0x57899981
 PointerToSymbolTable:    0x0
 NumberOfSymbols:         0
 Size of OpionalHeader:   0xf0
@@ -37,10 +37,10 @@ Characteristics:         0x22
 Magic:      20b (PE+) 
 MajorLinkerVersion:      0xe
 MinorLinkerVersion:      0x0
-SizeOfCode:              0x59c00
-SizeOfInitializedData:   0x69e00
-SizeOfUninitializedData: 0x0
-EntryPoint:       0x52660
+SizeOfCode:              0x1a8000
+SizeOfInitializedData:   0x2c4a00
+SizeOfUninitializedData: 0x200
+EntryPoint:       0x9eb60
 BaseOfCode:       0x1000
 
 === Optional header windows-specific fields ===
@@ -54,18 +54,18 @@ MinorImageVersion:      0x0
 MajorSubsystemVersion:  0xa
 MinorSubsystemVersion:  0x0
 Win32VersionValue:      0x0
-SizeOfImage:            0xc7000
+SizeOfImage:            0x472000
 SizeOfHeaders:   0x400
-CheckSum:        0xc5fb5
+CheckSum:        0x482a3b
 Subsystem:    (2)   IMAGE_SUBSYSTEM_WINDOWS_GUI
 DllCharacteristics:        
-     IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA  
      IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE 
+     IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY
      IMAGE_DLLCHARACTERISTICS_NX_COMPAT
      IMAGE_DLLCHARACTERISTICS_GUARD_CF
      IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE
 SizeOfStackReserve:     0x80000
-SizeOfStackCommit:      0x2000
+SizeOfStackCommit:      0xe000
 SizeOfHeapReserve:      0x100000
 SizeOfHeapCommit:       0x1000
 LoaderFlags:            0x0
@@ -77,22 +77,22 @@ Export Table:
       Virtual Address: 0
       Size:            0
 Import Table:
-      Virtual Address: 83020
-      Size:            17c
+      Virtual Address: 21b4b8
+      Size:            5dc
 Resource Table:
-      Virtual Address: 8f000
-      Size:            36190
+      Virtual Address: 23f000
+      Size:            22e0d8
 Exception Table:
-      Virtual Address: 8a000
-      Size:            4494
+      Virtual Address: 228000
+      Size:            1524c
 Certificate Table:
-      Virtual Address: 0
-      Size:            0
+      Virtual Address: 468e00
+      Size:            c118
 Base Relocation Table:
-      Virtual Address: c6000
-      Size:            f18
+      Virtual Address: 46e000
+      Size:            3f0c
 Debug:
-      Virtual Address: 70af0
+      Virtual Address: 1e2b10
       Size:            38
 Architecture:
       Virtual Address: 0
@@ -104,17 +104,17 @@ TLS Table:
       Virtual Address: 0
       Size:            0
 Load Config Table:
-      Virtual Address: 5f020
+      Virtual Address: 1b9ae0
       Size:            d0
 Bound Import:
       Virtual Address: 0
       Size:            0
 IAT:
-      Virtual Address: 5f0f0
-      Size:            bf8
+      Virtual Address: 1c8fb0
+      Size:            2040
 Delay Import Descriptor:
-      Virtual Address: 0
-      Size:            0
+      Virtual Address: 21a258
+      Size:            440
 CLR Runtime Header:
       Virtual Address: 0
       Size:            0
@@ -126,28 +126,36 @@ Reserved, must be zero:
 Sections: 
    Name: .text
        VirtualAddress: 1000
-       VirtualSize:    59a5a
-       SizeOfRawData:  59c00
+       VirtualSize:    1a7ed7
+       SizeOfRawData:  1a8000
+   Name: .imrsiv
+       VirtualAddress: 1a9000
+       VirtualSize:    4
+       SizeOfRawData:  0
    Name: .rdata
-       VirtualAddress: 5b000
-       VirtualSize:    2a91c
-       SizeOfRawData:  2aa00
+       VirtualAddress: 1aa000
+       VirtualSize:    780e4
+       SizeOfRawData:  78200
    Name: .data
-       VirtualAddress: 86000
-       VirtualSize:    3a68
-       SizeOfRawData:  2e00
+       VirtualAddress: 223000
+       VirtualSize:    4dbc
+       SizeOfRawData:  e00
    Name: .pdata
-       VirtualAddress: 8a000
-       VirtualSize:    4494
-       SizeOfRawData:  4600
+       VirtualAddress: 228000
+       VirtualSize:    1524c
+       SizeOfRawData:  15400
+   Name: .didat
+       VirtualAddress: 23e000
+       VirtualSize:    3a0
+       SizeOfRawData:  400
    Name: .rsrc
-       VirtualAddress: 8f000
-       VirtualSize:    36190
-       SizeOfRawData:  36200
+       VirtualAddress: 23f000
+       VirtualSize:    22e0d8
+       SizeOfRawData:  22e200
    Name: .reloc
-       VirtualAddress: c6000
-       VirtualSize:    f18
-       SizeOfRawData:  1000
+       VirtualAddress: 46e000
+       VirtualSize:    3f0c
+       SizeOfRawData:  4000
 ```
 
 
