@@ -10,7 +10,7 @@ Some of the files that use PE headers includes:
 ## Building / Compiling / Running
 The source code can be compiled and run on both Linux/Windows, using either gcc or Visual Studio (tested on Visual Studio 2015).
 
-on Windows you can open the solution file and Build a solution of the project.
+on Windows you can open the solution (PErser.sln) file and Build a solution of the project.
 On Linux you can build and run the program in following steps.
 
 ```
@@ -79,6 +79,7 @@ NumberOfRvaAndSizes:    0x10
 - [x] Replce use of fgetc() functions for reading integers with  get16_le(), get32_le()...etc
 - [x] Read OptionalHeader (standard) and windows-specific
 - [x] Create separate structure for OptionalHeader
+- [x] Added build files for Microsoft Visual Studio (tested on Visual Studio 2015)
 - [ ] Add code to read DOS header
 - [ ] Read and print PE sections (name, size, permissions)
 - [ ] Implement functions to output parse-able text (for example, csv)
