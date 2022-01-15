@@ -27,6 +27,36 @@ char dataTable[][24] = { "Export Table",
                       "CLR Runtime Header",
                       "Reserved, must be zero"};
 
+uint32_t section_flags_arr[] = {0x00000008,
+0x00000020, 0x00000040, 0x00000080, 0x00000100,
+0x00000200, 0x00000800, 0x00001000, 0x00008000,
+0x00020000, 0x00020000, 0x00040000, 0x00080000,
+0x00100000, 0x00200000, 0x00300000, 0x00400000,
+0x00500000, 0x00600000, 0x00700000, 0x00800000,
+0x00900000, 0x00A00000, 0x00B00000, 0x00C00000,
+0x00D00000, 0x00E00000, 0x01000000, 0x02000000,
+0x04000000, 0x08000000, 0x10000000, 0x20000000,
+0x40000000, 0x80000000};
+
+char section_flags_str[][33] = { "IMAGE_SCN_TYPE_NO_PAD",
+"IMAGE_SCN_CNT_CODE", "IMAGE_SCN_CNT_INITIALIZED_DATA",
+"IMAGE_SCN_CNT_UNINITIALIZED_ DATA", "IMAGE_SCN_LNK_OTHER",
+"IMAGE_SCN_LNK_INFO", "IMAGE_SCN_LNK_REMOVE",
+"IMAGE_SCN_LNK_COMDAT", "IMAGE_SCN_GPREL",
+"IMAGE_SCN_MEM_PURGEABLE", "IMAGE_SCN_MEM_16BIT",
+"IMAGE_SCN_MEM_LOCKED", "IMAGE_SCN_MEM_PRELOAD",
+"IMAGE_SCN_ALIGN_1BYTES", "IMAGE_SCN_ALIGN_2BYTES",
+"IMAGE_SCN_ALIGN_4BYTES", "IMAGE_SCN_ALIGN_8BYTES",
+"IMAGE_SCN_ALIGN_16BYTES", "IMAGE_SCN_ALIGN_32BYTES",
+"IMAGE_SCN_ALIGN_64BYTES", "IMAGE_SCN_ALIGN_128BYTES",
+"IMAGE_SCN_ALIGN_256BYTES", "IMAGE_SCN_ALIGN_512BYTES",
+"IMAGE_SCN_ALIGN_1024BYTES", "IMAGE_SCN_ALIGN_2048BYTES",
+"IMAGE_SCN_ALIGN_4096BYTES", "IMAGE_SCN_ALIGN_8192BYTES",
+"IMAGE_SCN_LNK_NRELOC_OVFL", "IMAGE_SCN_MEM_DISCARDABLE",
+"IMAGE_SCN_MEM_NOT_CACHED", "IMAGE_SCN_MEM_NOT_PAGED",
+"IMAGE_SCN_MEM_SHARED", "IMAGE_SCN_MEM_EXECUTE",
+"IMAGE_SCN_MEM_READ", "IMAGE_SCN_MEM_WRITE"};
+
 uint32_t   read_elfnew(FILE *in)
 {
   uint32_t value;
@@ -41,7 +71,7 @@ uint32_t   read_elfnew(FILE *in)
   return value;
 }
 
-void print_characteristics(uint16_t ch)
+void print_pe_characteristics(uint16_t ch)
 {
   if( ch & (IMAGE_FILE_DLL) )
   {
@@ -274,6 +304,15 @@ void print_subsystem(uint16_t system){
   }
 }
 
+void print_section_characteristics(uint32_t ch){
+  for(int i = 0; i < 35; i++){
+    if(ch & (section_flags_arr[i])){
+      printf("          %s\n", section_flags_str[i]);
+    }
+  }
+}
+
+
 char *read_str(FILE *in, int count){
   char *ch = malloc(sizeof(char)*count);
   char str_ch[0];
@@ -332,7 +371,7 @@ void print_info(char *argv, dos_header_t *dosHeader)
   printf("NumberOfSymbols:         %d\n", file->numberOfSym);
   printf("Size of OpionalHeader:   0x%x\n", file->optionalHeaderSize);
   printf("Characteristics:         0x%x\n", file->characteristics);
-  print_characteristics(file->characteristics);
+  print_pe_characteristics(file->characteristics);
 
   // Image Optional Header 
   printf("\n=== Optional header standard fields ===\n");
@@ -392,6 +431,13 @@ void print_info(char *argv, dos_header_t *dosHeader)
       printf("       VirtualAddress: %x\n", dosHeader->pe->section_table[i].virtualAddr );
       printf("       VirtualSize:    %x\n", dosHeader->pe->section_table[i].virtualSize );
       printf("       SizeOfRawData:  %x\n", dosHeader->pe->section_table[i].sizeOfRawData );
+      printf("       PointerToRawData:   %x\n", dosHeader->pe->section_table[i].ptrToRawData );
+      printf("       PointerToRelactons: %x\n", dosHeader->pe->section_table[i].ptrToReloc );
+      printf("       PointerToLinenumbers:  %x\n", dosHeader->pe->section_table[i].ptrToLineNum );
+      printf("       NumberOfRelocations:   %x\n", dosHeader->pe->section_table[i].numberOfReloc );
+      printf("       NumberOfLinenumbers:   %x\n", dosHeader->pe->section_table[i].numberOfLineNum );
+      printf("       Characteristics:   %x\n", dosHeader->pe->section_table[i].characteristics );
+      print_section_characteristics(dosHeader->pe->section_table[i].characteristics);
   }
 
 }

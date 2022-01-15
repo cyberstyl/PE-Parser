@@ -90,11 +90,12 @@ typedef struct dos_header_t{
 
 // functions to output PE info
 void print_info(char *argv, dos_header_t *dosHeader);
-void print_characteristics(uint16_t ch);
+void print_pe_characteristics(uint16_t ch);
 void print_machine(uint16_t mach);
 void print_magic(uint16_t magic);
 void print_subsystem(uint16_t system);
 void print_dllcharacteristics(uint16_t ch);
+void print_section_characteristics(uint32_t ch);
 
 // functions to read from FILE stream
 void      read_pe(char *filename, dos_header_t *dosHeader);
@@ -171,5 +172,6 @@ uint64_t  read64_le(FILE *in);
 #define IMAGE_DLLCHARACTERISTICS_WDM_DRIVER        0x2000   // A WDM driver.
 #define IMAGE_DLLCHARACTERISTICS_GUARD_CF          0x4000   // Image supports Control Flow Guard.
 #define IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE   0x8000  // Terminal Server aware. 
+
 
 #endif
