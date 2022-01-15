@@ -5,22 +5,36 @@
 
 int main(int argc, char* argv[])
 {
+  FILE *in;
+  dos_header_t dosHeader;
+
   if(argc < 2){
     printf("please supply at least One valid PE file\n");
     exit(1);
   }
 
-  dos_header_t dosHeader;
-  pe_header_t peHeader;
-  optional_header_t optionalHeader;
 
-  dosHeader.pe = &peHeader;
-  peHeader.optionalHeader = &optionalHeader;
 
-  for(int i = 1; i < argc; i++){
-    read_pe(argv[i], &dosHeader);
-    print_info(argv[i], &dosHeader);
+  if (argc >= 2)
+  {
+
+    for(int i = 1; i < argc; i++)
+    {
+      in = fopen(argv[i], "rb");
+      if(in == NULL)
+      {
+        printf("Can't open '%s' file, exiting\n", argv[i]);
+        continue;
+      }      
+
+      printf("showing file: %s \n\n", argv[i]);
+      read_pe(in, &dosHeader);
+      print_info(&dosHeader);
+      fclose(in);
+    }
   }
+
+  if(in != NULL) fclose(in);
 
   return 0;
 }

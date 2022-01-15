@@ -236,6 +236,7 @@ Sections:
 - [x] Read OptionalHeader (standard) and windows-specific
 - [x] Create separate structure for OptionalHeader
 - [x] Added build files for Microsoft Visual Studio (tested on Visual Studio 2015)
+- [ ] Add separate functions to handle memory allocation/cleanup.
 - [ ] Add code to read DOS header
 - [x] Read and print PE sections (name, size, permissions)
 - [ ] Implement functions to output parse-able text (for example, csv)

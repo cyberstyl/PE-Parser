@@ -1,6 +1,6 @@
 
 CC= gcc
-ARGS= -Wall -O1
+ARGS= -Wall -O2
 SRC= ./src
 BUILD= ./build
 

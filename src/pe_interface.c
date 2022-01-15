@@ -312,13 +312,19 @@ void print_section_characteristics(uint32_t ch){
   }
 }
 
+// reminder that:
+//  A byte is 8 bits, 
+// a word is 2 bytes (16 bits), 
+// a doubleword is 4 bytes (32 bits), 
+// and a quadword is 8 bytes (64 bits).
 
 char *read_str(FILE *in, int count){
   char *ch = malloc(sizeof(char)*count);
-  char str_ch[0];
-  for(int i = 0; i < count; i++){
-    str_ch[0] = fgetc(in);
-    strcat(ch, str_ch);
+  char byte[0];
+  for(int i = 0; i < count; i++)
+  {
+    byte[0] = fgetc(in);
+    strcat(ch, byte);
   }
   return ch;
 }
@@ -353,80 +359,82 @@ uint64_t  read64_le(FILE *in)
   return value;
 }
 
-void print_info(char *argv, dos_header_t *dosHeader)
+void print_info(dos_header_t *dosHeader)
 {
-  pe_header_t *file;
-  file = dosHeader->pe;
+  //pe_header_t *file = dosHeader->pe;
   
-  printf("\nFile: %s\n", argv);
+  printf("==============\n");
+  printf("magic: %c%c\n", (0xff & dosHeader->magic), ( dosHeader->magic>>8) );
+  printf("el_fanew: %x\n", dosHeader->e_lfanew);
+
   printf("\n=== PE header information ===\n");
   // PE header
-  printf("Signature:        0x%x (%c%c) \n",  file->signature, 
-               (0xff & file->signature), 0xff & (file->signature>>8) );
+  printf("Signature:        0x%x (%c%c) \n",  dosHeader->pe.signature, 
+               (0xff & dosHeader->pe.signature), 0xff & (dosHeader->pe.signature>>8) );
   printf("Machine:       ");
-  print_machine(file->machine);
-  printf("number of sections:      %d\n", file->numberOfSections);
-  printf("TimeDateStamp:           0x%x\n", file->timeStamp);
-  printf("PointerToSymbolTable:    0x%x\n", file->symTablePtr);
-  printf("NumberOfSymbols:         %d\n", file->numberOfSym);
-  printf("Size of OpionalHeader:   0x%x\n", file->optionalHeaderSize);
-  printf("Characteristics:         0x%x\n", file->characteristics);
-  print_pe_characteristics(file->characteristics);
-
+  print_machine(dosHeader->pe.machine);
+  printf("number of sections:      %d\n", dosHeader->pe.numberOfSections);
+  printf("TimeDateStamp:           0x%x\n", dosHeader->pe.timeStamp);
+  printf("PointerToSymbolTable:    0x%x\n", dosHeader->pe.symTablePtr);
+  printf("NumberOfSymbols:         %d\n", dosHeader->pe.numberOfSym);
+  printf("Size of OpionalHeader:   0x%x\n", dosHeader->pe.optionalHeaderSize);
+  printf("Characteristics:         0x%x\n", dosHeader->pe.characteristics);
+  print_pe_characteristics(dosHeader->pe.characteristics);
+  
   // Image Optional Header 
   printf("\n=== Optional header standard fields ===\n");
   printf("Magic:      ");
-  print_magic(file->optionalHeader->magic);
-  printf("MajorLinkerVersion:      0x%x\n", file->optionalHeader->majorLinkerVer);
-  printf("MinorLinkerVersion:      0x%x\n", file->optionalHeader->minorLinkerVer);
-  printf("SizeOfCode:              0x%x\n", file->optionalHeader->sizeOfCode);
-  printf("SizeOfInitializedData:   0x%x\n", file->optionalHeader->sizeOfInitializedData);
-  printf("SizeOfUninitializedData: 0x%x\n", file->optionalHeader->sizeOfUninitializedData);
-  printf("EntryPoint:       0x%x\n", file->optionalHeader->entryPoint);
-  printf("BaseOfCode:       0x%x\n", file->optionalHeader->baseOfCode);
+  print_magic(dosHeader->pe.optionalHeader.magic);
+  printf("MajorLinkerVersion:      0x%x\n", dosHeader->pe.optionalHeader.majorLinkerVer);
+  printf("MinorLinkerVersion:      0x%x\n", dosHeader->pe.optionalHeader.minorLinkerVer);
+  printf("SizeOfCode:              0x%x\n", dosHeader->pe.optionalHeader.sizeOfCode);
+  printf("SizeOfInitializedData:   0x%x\n", dosHeader->pe.optionalHeader.sizeOfInitializedData);
+  printf("SizeOfUninitializedData: 0x%x\n", dosHeader->pe.optionalHeader.sizeOfUninitializedData);
+  printf("EntryPoint:       0x%x\n", dosHeader->pe.optionalHeader.entryPoint);
+  printf("BaseOfCode:       0x%x\n", dosHeader->pe.optionalHeader.baseOfCode);
 
   printf("\n=== Optional header windows-specific fields ===\n");
-  if(file->optionalHeader->magic == OPTIONAL_IMAGE_PE32){
-    printf("BaseOfData:           0x%x\n", file->optionalHeader->baseOfData);
+  if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32){
+    printf("BaseOfData:           0x%x\n", dosHeader->pe.optionalHeader.baseOfData);
   }
-  printf("ImageBase:              %p\n", (void*) file->optionalHeader->imageBase);
-  printf("SectionAlignment:       0x%x\n", file->optionalHeader->sectionAlignment);
-  printf("FileAlignment:          0x%x\n", file->optionalHeader->fileAlignment);
-  printf("MajorOperatingSystemVersion:      0x%x\n", file->optionalHeader->majorOSVer);
-  printf("MinorOperatingSystemVersion:      0x%x\n", file->optionalHeader->minorOSVer);  
-  printf("MajorImageVersion:      0x%x\n", file->optionalHeader->majorImageVer);
-  printf("MinorImageVersion:      0x%x\n", file->optionalHeader->minorImageVer);
-  printf("MajorSubsystemVersion:  0x%x\n", file->optionalHeader->majorSubsystemVer);
-  printf("MinorSubsystemVersion:  0x%x\n", file->optionalHeader->minorSubsystemVer);
-  printf("Win32VersionValue:      0x%x\n", file->optionalHeader->win32VersionVal);
-  printf("SizeOfImage:            0x%x\n", file->optionalHeader->sizeOfImage);
-  printf("SizeOfHeaders:   0x%x\n", file->optionalHeader->sizeOfHeaders);
-  printf("CheckSum:        0x%x\n", file->optionalHeader->checkSum);
+  printf("ImageBase:              %p\n", (void*) dosHeader->pe.optionalHeader.imageBase);
+  printf("SectionAlignment:       0x%x\n", dosHeader->pe.optionalHeader.sectionAlignment);
+  printf("FileAlignment:          0x%x\n", dosHeader->pe.optionalHeader.fileAlignment);
+  printf("MajorOperatingSystemVersion:      0x%x\n", dosHeader->pe.optionalHeader.majorOSVer);
+  printf("MinorOperatingSystemVersion:      0x%x\n", dosHeader->pe.optionalHeader.minorOSVer);  
+  printf("MajorImageVersion:      0x%x\n", dosHeader->pe.optionalHeader.majorImageVer);
+  printf("MinorImageVersion:      0x%x\n", dosHeader->pe.optionalHeader.minorImageVer);
+  printf("MajorSubsystemVersion:  0x%x\n", dosHeader->pe.optionalHeader.majorSubsystemVer);
+  printf("MinorSubsystemVersion:  0x%x\n", dosHeader->pe.optionalHeader.minorSubsystemVer);
+  printf("Win32VersionValue:      0x%x\n", dosHeader->pe.optionalHeader.win32VersionVal);
+  printf("SizeOfImage:            0x%x\n", dosHeader->pe.optionalHeader.sizeOfImage);
+  printf("SizeOfHeaders:   0x%x\n", dosHeader->pe.optionalHeader.sizeOfHeaders);
+  printf("CheckSum:        0x%x\n", dosHeader->pe.optionalHeader.checkSum);
   printf("Subsystem:  ");
-  print_subsystem(file->optionalHeader->subsystem);
+  print_subsystem(dosHeader->pe.optionalHeader.subsystem);
   printf("DllCharacteristics:        \n");
-  print_dllcharacteristics(file->optionalHeader->dllCharacteristics);
+  print_dllcharacteristics(dosHeader->pe.optionalHeader.dllCharacteristics);
 
-  printf("SizeOfStackReserve:     %p\n", (void*) file->optionalHeader->sizeOfStackReserve);
-  printf("SizeOfStackCommit:      %p\n", (void*) file->optionalHeader->sizeOfStackCommit);
-  printf("SizeOfHeapReserve:      %p\n", (void*) file->optionalHeader->sizeOfHeapReserve);
-  printf("SizeOfHeapCommit:       %p\n", (void*) file->optionalHeader->sizeOfHeapCommit);
+  printf("SizeOfStackReserve:     %p\n", (void*) dosHeader->pe.optionalHeader.sizeOfStackReserve);
+  printf("SizeOfStackCommit:      %p\n", (void*) dosHeader->pe.optionalHeader.sizeOfStackCommit);
+  printf("SizeOfHeapReserve:      %p\n", (void*) dosHeader->pe.optionalHeader.sizeOfHeapReserve);
+  printf("SizeOfHeapCommit:       %p\n", (void*) dosHeader->pe.optionalHeader.sizeOfHeapCommit);
 
-  printf("LoaderFlags:            0x%x\n", file->optionalHeader->loaderFlags);
-  printf("NumberOfRvaAndSizes:    0x%x\n", file->optionalHeader->numberOfRvaAndSizes);
+  printf("LoaderFlags:            0x%x\n", dosHeader->pe.optionalHeader.loaderFlags);
+  printf("NumberOfRvaAndSizes:    0x%x\n", dosHeader->pe.optionalHeader.numberOfRvaAndSizes);
 
   printf("\n========================\n");
   printf("Data Tables \n");
-  for(int i = 0; i < 16; i++){
+  for(int i = 0; i < 15; i++){
       printf("%s:\n", dataTable[i]);
-      printf("      Virtual Address: %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr);
-      printf("      Size:            %x\n",  dosHeader->pe->optionalHeader->dataDirectory[i].size);
+      printf("      Virtual Address: %x\n",  dosHeader->pe.optionalHeader.dataDirectory[i].virtualAddr);
+      printf("      Size:            %x\n",  dosHeader->pe.optionalHeader.dataDirectory[i].size);
   }  
 
   printf("\n========================\n");
   printf("Sections: \n");
 
-  for(int i = 0; i < dosHeader->pe->numberOfSections ;i++ ){
+  for(int i = 0; i < dosHeader->pe.numberOfSections ;i++ ){
       printf("   Name: %s\n", dosHeader->section_table[i].name );
       printf("       VirtualAddress: %x\n", dosHeader->section_table[i].virtualAddr );
       printf("       VirtualSize:    %x\n", dosHeader->section_table[i].virtualSize );
@@ -448,109 +456,117 @@ void print_info(char *argv, dos_header_t *dosHeader)
     printf("    Export Flags: %x \n", dosHeader->exportDir.timeStamp);
 }
 
-void read_pe(char *filename, dos_header_t *dosHeader)
+void read_pe(FILE *in, dos_header_t *dosHeader)
 {
-  FILE *in = NULL;
-  in = fopen(filename, "rb");
+  dosHeader->magic      = read16_le(in);
+  dosHeader->e_cblp     = read16_le(in);
+  dosHeader->e_cp       = read16_le(in);
+  dosHeader->e_crlc     = read16_le(in);
+  dosHeader->e_cparhdr  = read16_le(in);
+  dosHeader->e_minalloc = read16_le(in);
+  dosHeader->e_maxalloc = read16_le(in);
+  dosHeader->e_ss       = read16_le(in);
+  dosHeader->e_sp       = read16_le(in);
+  dosHeader->e_csum     = read16_le(in);
+  dosHeader->e_ip       = read16_le(in);
+  dosHeader->e_cs       = read16_le(in);
+  dosHeader->e_lfarlc   = read16_le(in);
+  dosHeader->e_ovno     = read16_le(in);
+  // we've ignored a lot of fields here 
+  // because now they are not important to us
+  ////////////////////////////////////////////
+  dosHeader->e_lfanew   = read_elfnew(in);
 
-  if(in == NULL)
-  {
-    perror("Can't open file, exiting\n");
-    exit(-1);
-  }
 
-  // TODO: read DOS header
-  //
-  //
-
-  // reading e_lfnew value
-  dosHeader->pe->peOffset = read_elfnew(in);
-
+  
   // reading PE header from e_lfanew offset
-  if(fseek(in, dosHeader->pe->peOffset, SEEK_SET) != -1)
-  {
+  if( fseek(in, dosHeader->e_lfanew, SEEK_SET) != -1)
+  {  
     // PE header
-    dosHeader->pe->signature          = read32_le(in);
-    dosHeader->pe->machine            = read16_le(in);
-    dosHeader->pe->numberOfSections   = read16_le(in);
-    dosHeader->pe->timeStamp          = read32_le(in);
-    dosHeader->pe->symTablePtr         = read32_le(in);
-    dosHeader->pe->numberOfSym        = read32_le(in);
-    dosHeader->pe->optionalHeaderSize = read16_le(in);
-    dosHeader->pe->characteristics    = read16_le(in);
-
+    dosHeader->pe.signature          = read32_le(in);
+    dosHeader->pe.machine            = read16_le(in);
+    dosHeader->pe.numberOfSections   = read16_le(in);
+    dosHeader->pe.timeStamp          = read32_le(in);
+    dosHeader->pe.symTablePtr        = read32_le(in);
+    dosHeader->pe.numberOfSym        = read32_le(in);
+    dosHeader->pe.optionalHeaderSize = read16_le(in);
+    dosHeader->pe.characteristics    = read16_le(in);
+     
+    
     // optional header (Standard Fields)
-    dosHeader->pe->optionalHeader->magic          = read16_le(in);
-    dosHeader->pe->optionalHeader->majorLinkerVer = read8_le(in);
-    dosHeader->pe->optionalHeader->minorLinkerVer = read8_le(in);
-    dosHeader->pe->optionalHeader->sizeOfCode     = read32_le(in);
-    dosHeader->pe->optionalHeader->sizeOfInitializedData    = read32_le(in);
-    dosHeader->pe->optionalHeader->sizeOfUninitializedData  = read32_le(in);
-    dosHeader->pe->optionalHeader->entryPoint = read32_le(in);
-    dosHeader->pe->optionalHeader->baseOfCode = read32_le(in);
+    dosHeader->pe.optionalHeader.magic          = read16_le(in);
+    dosHeader->pe.optionalHeader.majorLinkerVer = read8_le(in);
+    dosHeader->pe.optionalHeader.minorLinkerVer = read8_le(in);
+    dosHeader->pe.optionalHeader.sizeOfCode     = read32_le(in);
+    dosHeader->pe.optionalHeader.sizeOfInitializedData    = read32_le(in);
+    dosHeader->pe.optionalHeader.sizeOfUninitializedData  = read32_le(in);
+    dosHeader->pe.optionalHeader.entryPoint = read32_le(in);
+    dosHeader->pe.optionalHeader.baseOfCode = read32_le(in);
 
-    if(dosHeader->pe->optionalHeader->magic == OPTIONAL_IMAGE_PE32_plus)
+    if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
     {
-      dosHeader->pe->optionalHeader->imageBase        = read64_le(in);
+      dosHeader->pe.optionalHeader.imageBase        = read64_le(in);
     } else {
-      dosHeader->pe->optionalHeader->baseOfData       = read32_le(in);
-      dosHeader->pe->optionalHeader->imageBase        = read32_le(in);
+      dosHeader->pe.optionalHeader.baseOfData       = read32_le(in);
+      dosHeader->pe.optionalHeader.imageBase        = read32_le(in);
     }
     
-    dosHeader->pe->optionalHeader->sectionAlignment = read32_le(in);
-    dosHeader->pe->optionalHeader->fileAlignment    = read32_le(in);
-    dosHeader->pe->optionalHeader->majorOSVer       = read16_le(in);
-    dosHeader->pe->optionalHeader->minorOSVer       = read16_le(in);
-    dosHeader->pe->optionalHeader->majorImageVer    = read16_le(in);
-    dosHeader->pe->optionalHeader->minorImageVer    = read16_le(in);
-    dosHeader->pe->optionalHeader->majorSubsystemVer = read16_le(in);
-    dosHeader->pe->optionalHeader->minorSubsystemVer = read16_le(in);
-    dosHeader->pe->optionalHeader->win32VersionVal   = read32_le(in);
-    dosHeader->pe->optionalHeader->sizeOfImage       = read32_le(in);
-    dosHeader->pe->optionalHeader->sizeOfHeaders     = read32_le(in);
-    dosHeader->pe->optionalHeader->checkSum          = read32_le(in);
-    dosHeader->pe->optionalHeader->subsystem         = read16_le(in);
-    dosHeader->pe->optionalHeader->dllCharacteristics= read16_le(in);
+    dosHeader->pe.optionalHeader.sectionAlignment = read32_le(in);
+    dosHeader->pe.optionalHeader.fileAlignment    = read32_le(in);
+    dosHeader->pe.optionalHeader.majorOSVer       = read16_le(in);
+    dosHeader->pe.optionalHeader.minorOSVer       = read16_le(in);
+    dosHeader->pe.optionalHeader.majorImageVer    = read16_le(in);
+    dosHeader->pe.optionalHeader.minorImageVer    = read16_le(in);
+    dosHeader->pe.optionalHeader.majorSubsystemVer = read16_le(in);
+    dosHeader->pe.optionalHeader.minorSubsystemVer = read16_le(in);
+    dosHeader->pe.optionalHeader.win32VersionVal   = read32_le(in);
+    dosHeader->pe.optionalHeader.sizeOfImage       = read32_le(in);
+    dosHeader->pe.optionalHeader.sizeOfHeaders     = read32_le(in);
+    dosHeader->pe.optionalHeader.checkSum          = read32_le(in);
+    dosHeader->pe.optionalHeader.subsystem         = read16_le(in);
+    dosHeader->pe.optionalHeader.dllCharacteristics= read16_le(in);
     
-    if(dosHeader->pe->optionalHeader->magic == OPTIONAL_IMAGE_PE32_plus)
+    if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
     {
-      dosHeader->pe->optionalHeader->sizeOfStackReserve= read64_le(in);
-      dosHeader->pe->optionalHeader->sizeOfStackCommit = read64_le(in);
-      dosHeader->pe->optionalHeader->sizeOfHeapReserve = read64_le(in);
-      dosHeader->pe->optionalHeader->sizeOfHeapCommit  = read64_le(in);      
+      dosHeader->pe.optionalHeader.sizeOfStackReserve= read64_le(in);
+      dosHeader->pe.optionalHeader.sizeOfStackCommit = read64_le(in);
+      dosHeader->pe.optionalHeader.sizeOfHeapReserve = read64_le(in);
+      dosHeader->pe.optionalHeader.sizeOfHeapCommit  = read64_le(in);      
     } else {
-      dosHeader->pe->optionalHeader->sizeOfStackReserve= read32_le(in);
-      dosHeader->pe->optionalHeader->sizeOfStackCommit = read32_le(in);
-      dosHeader->pe->optionalHeader->sizeOfHeapReserve = read32_le(in);
-      dosHeader->pe->optionalHeader->sizeOfHeapCommit  = read32_le(in);
+      dosHeader->pe.optionalHeader.sizeOfStackReserve= read32_le(in);
+      dosHeader->pe.optionalHeader.sizeOfStackCommit = read32_le(in);
+      dosHeader->pe.optionalHeader.sizeOfHeapReserve = read32_le(in);
+      dosHeader->pe.optionalHeader.sizeOfHeapCommit  = read32_le(in);
     }
-    dosHeader->pe->optionalHeader->loaderFlags         = read32_le(in);
-    dosHeader->pe->optionalHeader->numberOfRvaAndSizes = read32_le(in);
+    dosHeader->pe.optionalHeader.loaderFlags         = read32_le(in);
+    dosHeader->pe.optionalHeader.numberOfRvaAndSizes = read32_le(in);
     
-    for(int i = 0; i < 16; i++){
-        dosHeader->pe->optionalHeader->dataDirectory[i].virtualAddr = read32_le(in);
-        dosHeader->pe->optionalHeader->dataDirectory[i].size = read32_le(in);
+    dosHeader->pe.optionalHeader.dataDirectory = malloc(sizeof(data_directory_t) 
+                                     * dosHeader->pe.optionalHeader.numberOfRvaAndSizes );
+
+    for(int i = 0; i < dosHeader->pe.optionalHeader.numberOfRvaAndSizes ; i++){
+        dosHeader->pe.optionalHeader.dataDirectory[i].virtualAddr = read32_le(in);
+        dosHeader->pe.optionalHeader.dataDirectory[i].size = read32_le(in);
     }
-    
-    dosHeader->section_table = malloc(sizeof(section_table_t) * 
-                         dosHeader->pe->numberOfSections);
-    for(int i = 0; i < dosHeader->pe->numberOfSections; i++){
+    dosHeader->section_table = malloc(
+      sizeof(section_table_t) * dosHeader->pe.numberOfSections  );
+    for(uint16_t i = 0; i < dosHeader->pe.numberOfSections; i++){
         dosHeader->section_table[i].name = read_str(in, 8);
         dosHeader->section_table[i].virtualSize = read32_le(in);
         dosHeader->section_table[i].virtualAddr = read32_le(in);
         dosHeader->section_table[i].sizeOfRawData = read32_le(in);
-        dosHeader->section_table[i].ptrToRawData = read32_le(in);
-        dosHeader->section_table[i].ptrToReloc = read32_le(in);
-        dosHeader->section_table[i].ptrToLineNum= read32_le(in);
-        dosHeader->section_table[i].numberOfReloc = read16_le(in);
+        dosHeader->section_table[i].ptrToRawData  = read32_le(in);
+        dosHeader->section_table[i].ptrToReloc    = read32_le(in);
+        dosHeader->section_table[i].ptrToLineNum  = read32_le(in);
+        dosHeader->section_table[i].numberOfReloc   = read16_le(in);
         dosHeader->section_table[i].numberOfLineNum = read16_le(in);
         dosHeader->section_table[i].characteristics = read32_le(in);
     }
     dosHeader->exportDir.exportFlags = read32_le(in);
     dosHeader->exportDir.timeStamp = read32_le(in);
+    dosHeader->exportDir.majorVer  = read16_le(in);
+     
 
   }
 
-
-  fclose(in);
 }

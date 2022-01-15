@@ -76,7 +76,7 @@ typedef struct optional_header_t{
   uint64_t 	sizeOfHeapCommit; 	
   uint32_t 	loaderFlags; 		
   uint32_t 	numberOfRvaAndSizes;
-  data_directory_t   dataDirectory[15];
+  data_directory_t   *dataDirectory;
 } optional_header_t;
 
 
@@ -91,7 +91,7 @@ typedef struct pe_header_t{
   uint32_t          numberOfSym;
   uint16_t          optionalHeaderSize;
   uint16_t          characteristics;
-  optional_header_t *optionalHeader;
+  optional_header_t optionalHeader;
 } pe_header_t;
 
 // DOS header
@@ -110,19 +110,19 @@ typedef struct dos_header_t{
   uint16_t	e_cs;		    // Initial (relative) CS value
   uint16_t	e_lfarlc;	  // File address of relocation table
   uint16_t	e_ovno;		  // Overloay number
-  uint16_t	e_res[4];	  // Reserved uint16_ts (4 uint16_ts)
+  uint64_t	e_res;	  // Reserved uint16_ts (4 uint16_ts)
   uint16_t	e_oemid;		// OEM identifier (for e_oeminfo)
   uint16_t	e_oeminfo;	// OEM information; e_oemid specific
-  uint16_t	e_res2[10];	// Reserved uint16_ts (10 uint16_ts)
+  uint64_t	e_res2;	// Reserved uint16_ts (10 uint16_ts)
   uint32_t  e_lfanew;   // Offset to start of PE header 
-  pe_header_t *pe;
+  pe_header_t pe;
   section_table_t   *section_table;
   export_directory_t exportDir;  
 }dos_header_t;
 
 
 // functions to output PE info
-void print_info(char *argv, dos_header_t *dosHeader);
+void print_info(dos_header_t *dosHeader);
 void print_pe_characteristics(uint16_t ch);
 void print_machine(uint16_t mach);
 void print_magic(uint16_t magic);
@@ -131,7 +131,7 @@ void print_dllcharacteristics(uint16_t ch);
 void print_section_characteristics(uint32_t ch);
 
 // functions to read from FILE stream
-void      read_pe(char *filename, dos_header_t *dosHeader);
+void      read_pe(FILE *in, dos_header_t *dosHeader);
 void      read_OpionalHeader(FILE *in);
 char     *read_str(FILE *in, int count);
 uint32_t  read_elfnew(FILE *in);
