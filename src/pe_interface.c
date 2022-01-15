@@ -438,8 +438,10 @@ void print_info(char *argv, dos_header_t *dosHeader)
       printf("       NumberOfLinenumbers:   %x\n", dosHeader->pe->section_table[i].numberOfLineNum );
       printf("       Characteristics:   %x\n", dosHeader->pe->section_table[i].characteristics );
       print_section_characteristics(dosHeader->pe->section_table[i].characteristics);
-  }
 
+      free(dosHeader->pe->section_table[i].name);
+  }
+  free(dosHeader->pe->section_table);
 }
 
 void read_pe(char *filename, dos_header_t *dosHeader)
@@ -540,6 +542,8 @@ void read_pe(char *filename, dos_header_t *dosHeader)
         dosHeader->pe->section_table[i].numberOfLineNum = read16_le(in);
         dosHeader->pe->section_table[i].characteristics = read32_le(in);
     }
+
+
   }
 
 
