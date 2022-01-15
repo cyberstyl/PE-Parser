@@ -40,7 +40,8 @@ typedef struct section_table_t{
 
 // Data Directory 
 typedef struct data_directory_t{
-  uint32_t virtualAddr;
+  uint32_t virtualAddr;   // The RVA is the address of the table relative 
+                          // to the base address of the image when the table is loaded
   uint32_t size;
 }data_directory_t;
 
@@ -134,12 +135,12 @@ void print_section_characteristics(uint32_t ch);
 void      read_pe(FILE *in, dos_header_t *dosHeader);
 void      read_OpionalHeader(FILE *in);
 char     *read_str(FILE *in, int count);
+uint64_t *read_int(FILE *in, int bytes, int count);
 uint32_t  read_elfnew(FILE *in);
 uint8_t   read8_le(FILE *in);
 uint16_t  read16_le(FILE *in);
 uint32_t  read32_le(FILE *in);
 uint64_t  read64_le(FILE *in);
-
 
 // Machine types
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types

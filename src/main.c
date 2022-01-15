@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  if(in != NULL) fclose(in);
+  // if(in != NULL) fclose(in);
 
   return 0;
 }

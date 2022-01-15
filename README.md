@@ -18,8 +18,11 @@ $ git clone https://github.com/adabz/PErser
 $ cd PErser/
 $ make
 $ ./perser ../samples-pe/explorer.exe
+showing file: ../samples-pe/Chakra.dll 
 
-File: ../samples-pe/explorer.exe
+==============
+magic: MZ
+el_fanew: f0
 
 === PE header information ===
 Signature:        0x4550 (PE) 
@@ -237,13 +240,13 @@ Sections:
 - [x] Create separate structure for OptionalHeader
 - [x] Added build files for Microsoft Visual Studio (tested on Visual Studio 2015)
 - [ ] Add separate functions to handle memory allocation/cleanup.
-- [ ] Add code to read DOS header
+- [x] Add code to read DOS header
 - [x] Read and print PE sections (name, size, permissions)
 - [ ] Implement functions to output parse-able text (for example, csv)
 - [x] Read basic DataDirectory info
 - [ ] Read imported functions (by name)
 - [ ] Read imported functions (by ordinal)
-- [ ] Read Export DataDirectory section
+- [x] Read Export DataDirectory section
 - [ ] Create Separate functions to read PE info
 - [x] Add ability to read all PE files in a current or given directory
 - [ ] Add ability to search for and handle PE files recursively
