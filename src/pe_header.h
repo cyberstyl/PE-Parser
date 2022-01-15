@@ -9,6 +9,21 @@
 #include <stdint.h>
 #include <string.h>
 
+// export table
+typedef struct export_directory_t{
+  uint32_t    exportFlags;
+  uint32_t    timeStamp;
+  uint16_t    majorVer;
+  uint16_t    minorVer;
+  uint32_t    nameRVA;
+  uint32_t    ordBase;
+  uint32_t    addrTableEntries;
+  uint32_t    numberOfNamePointers;
+  uint32_t    exportAddrTableRVA;
+  uint32_t    namePtrRVA;
+  uint32_t    ordTableRVA;
+}export_directory_t;
+
 // section table
 typedef struct section_table_t{
   char      *name;
@@ -61,7 +76,7 @@ typedef struct optional_header_t{
   uint64_t 	sizeOfHeapCommit; 	
   uint32_t 	loaderFlags; 		
   uint32_t 	numberOfRvaAndSizes;
-  data_directory_t dataDirectory[15];
+  data_directory_t   dataDirectory[15];
 } optional_header_t;
 
 
@@ -77,14 +92,32 @@ typedef struct pe_header_t{
   uint16_t          optionalHeaderSize;
   uint16_t          characteristics;
   optional_header_t *optionalHeader;
-  section_table_t   *section_table;
 } pe_header_t;
 
 // DOS header
 typedef struct dos_header_t{
-  uint16_t magic;
-  uint32_t e_lfanew;
+  uint16_t  magic;      // Magic DOS signature MZ 
+  uint16_t  e_cblp;		  // Bytes on last page of file
+  uint16_t  e_cp;		    // Pages in file
+  uint16_t  e_crlc;		  // Relocations
+  uint16_t	e_cparhdr;	// Size of header in paragraphs
+  uint16_t	e_minalloc;	// Minimum extra paragraphs needed
+  uint16_t	e_maxalloc;	// Maximum extra paragraphs needed
+  uint16_t	e_ss;		    // nitial (relative) SS value
+  uint16_t	e_sp;		    // Initial SP value
+  uint16_t	e_csum;		  // Checksum
+  uint16_t	e_ip;		    // Initial IP value
+  uint16_t	e_cs;		    // Initial (relative) CS value
+  uint16_t	e_lfarlc;	  // File address of relocation table
+  uint16_t	e_ovno;		  // Overloay number
+  uint16_t	e_res[4];	  // Reserved uint16_ts (4 uint16_ts)
+  uint16_t	e_oemid;		// OEM identifier (for e_oeminfo)
+  uint16_t	e_oeminfo;	// OEM information; e_oemid specific
+  uint16_t	e_res2[10];	// Reserved uint16_ts (10 uint16_ts)
+  uint32_t  e_lfanew;   // Offset to start of PE header 
   pe_header_t *pe;
+  section_table_t   *section_table;
+  export_directory_t exportDir;  
 }dos_header_t;
 
 

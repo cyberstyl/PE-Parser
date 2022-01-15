@@ -427,21 +427,25 @@ void print_info(char *argv, dos_header_t *dosHeader)
   printf("Sections: \n");
 
   for(int i = 0; i < dosHeader->pe->numberOfSections ;i++ ){
-      printf("   Name: %s\n", dosHeader->pe->section_table[i].name );
-      printf("       VirtualAddress: %x\n", dosHeader->pe->section_table[i].virtualAddr );
-      printf("       VirtualSize:    %x\n", dosHeader->pe->section_table[i].virtualSize );
-      printf("       SizeOfRawData:  %x\n", dosHeader->pe->section_table[i].sizeOfRawData );
-      printf("       PointerToRawData:   %x\n", dosHeader->pe->section_table[i].ptrToRawData );
-      printf("       PointerToRelactons: %x\n", dosHeader->pe->section_table[i].ptrToReloc );
-      printf("       PointerToLinenumbers:  %x\n", dosHeader->pe->section_table[i].ptrToLineNum );
-      printf("       NumberOfRelocations:   %x\n", dosHeader->pe->section_table[i].numberOfReloc );
-      printf("       NumberOfLinenumbers:   %x\n", dosHeader->pe->section_table[i].numberOfLineNum );
-      printf("       Characteristics:   %x\n", dosHeader->pe->section_table[i].characteristics );
-      print_section_characteristics(dosHeader->pe->section_table[i].characteristics);
+      printf("   Name: %s\n", dosHeader->section_table[i].name );
+      printf("       VirtualAddress: %x\n", dosHeader->section_table[i].virtualAddr );
+      printf("       VirtualSize:    %x\n", dosHeader->section_table[i].virtualSize );
+      printf("       SizeOfRawData:  %x\n", dosHeader->section_table[i].sizeOfRawData );
+      printf("       PointerToRawData:   %x\n", dosHeader->section_table[i].ptrToRawData );
+      printf("       PointerToRelactons: %x\n", dosHeader->section_table[i].ptrToReloc );
+      printf("       PointerToLinenumbers:  %x\n", dosHeader->section_table[i].ptrToLineNum );
+      printf("       NumberOfRelocations:   %x\n", dosHeader->section_table[i].numberOfReloc );
+      printf("       NumberOfLinenumbers:   %x\n", dosHeader->section_table[i].numberOfLineNum );
+      printf("       Characteristics:   %x\n", dosHeader->section_table[i].characteristics );
+      print_section_characteristics(dosHeader->section_table[i].characteristics);
 
-      free(dosHeader->pe->section_table[i].name);
+      free(dosHeader->section_table[i].name);
   }
-  free(dosHeader->pe->section_table);
+  free(dosHeader->section_table);
+    printf("\n==================\n");
+    printf("Export Directory Table:  \n");
+    printf("    Export Flags: %x \n", dosHeader->exportDir.exportFlags);
+    printf("    Export Flags: %x \n", dosHeader->exportDir.timeStamp);
 }
 
 void read_pe(char *filename, dos_header_t *dosHeader)
@@ -528,21 +532,22 @@ void read_pe(char *filename, dos_header_t *dosHeader)
         dosHeader->pe->optionalHeader->dataDirectory[i].size = read32_le(in);
     }
     
-    dosHeader->pe->section_table = malloc(sizeof(section_table_t) * 
+    dosHeader->section_table = malloc(sizeof(section_table_t) * 
                          dosHeader->pe->numberOfSections);
     for(int i = 0; i < dosHeader->pe->numberOfSections; i++){
-        dosHeader->pe->section_table[i].name = read_str(in, 8);
-        dosHeader->pe->section_table[i].virtualSize = read32_le(in);
-        dosHeader->pe->section_table[i].virtualAddr = read32_le(in);
-        dosHeader->pe->section_table[i].sizeOfRawData = read32_le(in);
-        dosHeader->pe->section_table[i].ptrToRawData = read32_le(in);
-        dosHeader->pe->section_table[i].ptrToReloc = read32_le(in);
-        dosHeader->pe->section_table[i].ptrToLineNum= read32_le(in);
-        dosHeader->pe->section_table[i].numberOfReloc = read16_le(in);
-        dosHeader->pe->section_table[i].numberOfLineNum = read16_le(in);
-        dosHeader->pe->section_table[i].characteristics = read32_le(in);
+        dosHeader->section_table[i].name = read_str(in, 8);
+        dosHeader->section_table[i].virtualSize = read32_le(in);
+        dosHeader->section_table[i].virtualAddr = read32_le(in);
+        dosHeader->section_table[i].sizeOfRawData = read32_le(in);
+        dosHeader->section_table[i].ptrToRawData = read32_le(in);
+        dosHeader->section_table[i].ptrToReloc = read32_le(in);
+        dosHeader->section_table[i].ptrToLineNum= read32_le(in);
+        dosHeader->section_table[i].numberOfReloc = read16_le(in);
+        dosHeader->section_table[i].numberOfLineNum = read16_le(in);
+        dosHeader->section_table[i].characteristics = read32_le(in);
     }
-
+    dosHeader->exportDir.exportFlags = read32_le(in);
+    dosHeader->exportDir.timeStamp = read32_le(in);
 
   }
 
