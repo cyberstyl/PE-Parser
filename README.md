@@ -242,10 +242,12 @@ Sections:
 - [x] Read basic DataDirectory info
 - [ ] Read imported functions (by name)
 - [ ] Read imported functions (by ordinal)
+- [ ] Read Export DataDirectory section
 - [ ] Create Separate functions to read PE info
 - [x] Add ability to read all PE files in a current or given directory
 - [ ] Add ability to search for and handle PE files recursively
 - [ ] Improve the code's read-ability
+    - [ ] Break the content of pe_interface.c into two files
     - [ ] Enforce consistent naming convention for struct members (for example objectName1)
     - [ ] Enforce having one function perform one task (whenever possible)
 - [ ] Release a compiled binary beta

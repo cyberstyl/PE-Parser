@@ -10,7 +10,7 @@
 #endif
 
 // DataTable Types
-char dataTable[][24] = { "Export Table",
+char dataTable[][25] = { "Export Table",
                       "Import Table",
                       "Resource Table",
                       "Exception Table",
