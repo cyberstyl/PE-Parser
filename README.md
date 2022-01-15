@@ -128,34 +128,103 @@ Sections:
        VirtualAddress: 1000
        VirtualSize:    1a7ed7
        SizeOfRawData:  1a8000
+       PointerToRawData:   400
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   60000020
+          IMAGE_SCN_CNT_CODE
+          IMAGE_SCN_MEM_EXECUTE
+          IMAGE_SCN_MEM_READ
    Name: .imrsiv
        VirtualAddress: 1a9000
        VirtualSize:    4
        SizeOfRawData:  0
+       PointerToRawData:   0
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   c0000080
+          IMAGE_SCN_CNT_UNINITIALIZED_ DATAIMAGE_SCN_LNK_OTHER
+          IMAGE_SCN_MEM_READ
+          IMAGE_SCN_MEM_WRITE
    Name: .rdata
        VirtualAddress: 1aa000
        VirtualSize:    780e4
        SizeOfRawData:  78200
+       PointerToRawData:   1a8400
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   40000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
    Name: .data
        VirtualAddress: 223000
        VirtualSize:    4dbc
        SizeOfRawData:  e00
+       PointerToRawData:   220600
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   c0000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
+          IMAGE_SCN_MEM_WRITE
    Name: .pdata
        VirtualAddress: 228000
        VirtualSize:    1524c
        SizeOfRawData:  15400
+       PointerToRawData:   221400
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   40000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
    Name: .didat
        VirtualAddress: 23e000
        VirtualSize:    3a0
        SizeOfRawData:  400
+       PointerToRawData:   236800
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   c0000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
+          IMAGE_SCN_MEM_WRITE
    Name: .rsrc
        VirtualAddress: 23f000
        VirtualSize:    22e0d8
        SizeOfRawData:  22e200
+       PointerToRawData:   236c00
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   40000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
    Name: .reloc
        VirtualAddress: 46e000
        VirtualSize:    3f0c
        SizeOfRawData:  4000
+       PointerToRawData:   464e00
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   42000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_DISCARDABLE
+          IMAGE_SCN_MEM_READ
 ```
 
 
