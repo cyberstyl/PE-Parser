@@ -17,15 +17,15 @@ On Linux you can build and run the program in following steps.
 $ git clone https://github.com/adabz/PErser
 $ cd PErser/
 $ make
-$ ./perser ../samples-pe/explorer.exe
-showing file: ../samples-pe/Chakra.dll 
+$ ./perser ../samples-pe/Chakra.dll 
+showing file: ../samples-pe/Chakra.dll
 
 ==============
 magic: MZ
 el_fanew: f0
 
 === PE header information ===
-Signature:        0x4550 (PE) 
+Signature:        0x4550 (PE)
 Machine:          (8664)  IMAGE_FILE_MACHINE_AMD64
 number of sections:      8
 TimeDateStamp:           0x57899981
@@ -33,11 +33,11 @@ PointerToSymbolTable:    0x0
 NumberOfSymbols:         0
 Size of OpionalHeader:   0xf0
 Characteristics:         0x22
-     IMAGE_FILE_EXECUTABLE_IMAGE 
+     IMAGE_FILE_EXECUTABLE_IMAGE
      IMAGE_FILE_LARGE_ADDRESS_AWARE
 
 === Optional header standard fields ===
-Magic:      20b (PE+) 
+Magic:      20b (PE+)
 MajorLinkerVersion:      0xe
 MinorLinkerVersion:      0x0
 SizeOfCode:              0x1a8000
@@ -62,7 +62,7 @@ SizeOfHeaders:   0x400
 CheckSum:        0x482a3b
 Subsystem:    (2)   IMAGE_SUBSYSTEM_WINDOWS_GUI
 DllCharacteristics:        
-     IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE 
+     IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
      IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY
      IMAGE_DLLCHARACTERISTICS_NX_COMPAT
      IMAGE_DLLCHARACTERISTICS_GUARD_CF
@@ -75,7 +75,7 @@ LoaderFlags:            0x0
 NumberOfRvaAndSizes:    0x10
 
 ========================
-Data Tables 
+Data Tables
 Export Table:
       Virtual Address: 0
       Size:            0
@@ -126,7 +126,7 @@ Reserved, must be zero:
       Size:            0
 
 ========================
-Sections: 
+Sections:
    Name: .text
        VirtualAddress: 1000
        VirtualSize:    1a7ed7
@@ -264,4 +264,3 @@ During the making of this program I've used:
 https://docs.microsoft.com/en-us/windows/win32/debug/pe-format)
 - [Ange Albertini's Visual PE101 documentation of the PE format](
 https://github.com/corkami/pics/tree/master/binary/pe101)
-
