@@ -9,7 +9,7 @@
 #pragma warning(disable:4996)
 #endif
 
-// DataTable Types
+// Data Directories Types
 char dataTable[][25] = { "Export Table",
                       "Import Table",
                       "Resource Table",
@@ -38,6 +38,8 @@ uint32_t section_flags_arr[] = {0x00000008,
 0x04000000, 0x08000000, 0x10000000, 0x20000000,
 0x40000000, 0x80000000};
 
+
+// header section types
 char section_flags_str[][33] = { "IMAGE_SCN_TYPE_NO_PAD",
 "IMAGE_SCN_CNT_CODE", "IMAGE_SCN_CNT_INITIALIZED_DATA",
 "IMAGE_SCN_CNT_UNINITIALIZED_ DATA", "IMAGE_SCN_LNK_OTHER",
@@ -57,20 +59,109 @@ char section_flags_str[][33] = { "IMAGE_SCN_TYPE_NO_PAD",
 "IMAGE_SCN_MEM_SHARED", "IMAGE_SCN_MEM_EXECUTE",
 "IMAGE_SCN_MEM_READ", "IMAGE_SCN_MEM_WRITE"};
 
-uint32_t   read_elfnew(FILE *in)
+
+//-------------------------------------------
+// A reminder:
+//  A byte is      8 bits, 
+// a word is       2 bytes (16 bits), 
+// a doubleword is 4 bytes (32 bits), 
+// a quadword is   8 bytes (64 bits).
+//--------------------------------------------
+
+// read_str(): reads a 'count' of characters from a file
+// arguments: FILE stream to read from, count of characters to read
+// returns: pointer to a string of characters.
+char *read_str(FILE *in, int count)
 {
-  uint32_t value;
-  if(fseek(in, 0x3c, SEEK_SET) != -1)
+  char *ch = malloc(sizeof(char)*count);
+  char byte[0];
+  for(int i = 0; i < count; i++)
   {
-    value = read32_le(in);
+    byte[0] = fgetc(in);
+    strcat(ch, byte);
   }
-  else
-  {
-    return 0;
-  }
+  return ch;
+}
+
+// read8_le(): reads an 8bit integer
+// arguments: a file stream to read from
+// return: an 8 bit integer
+uint8_t  read8_le(FILE *in)
+{
+  uint8_t value;
+  value = fgetc(in);
   return value;
 }
 
+// read16_le(): reads an 16bit little-endian integer
+// arguments: a file stream to read from
+// return: an 16 bit integer
+uint16_t  read16_le(FILE *in)
+{
+  uint16_t value;
+  value = fgetc(in) | (fgetc(in)<<8);
+  return value;
+}
+
+// read32_le(): reads an 32bit little-endian integer
+// arguments: a file stream to read from
+// return: an 32 bit integer
+uint32_t  read32_le(FILE *in)
+{
+  uint32_t value;
+  value = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
+  return value;
+}
+
+// read64_le(): reads an 64bit little-endian integer
+// arguments: a file stream to read from
+// return: an 64 bit integer
+uint64_t  read64_le(FILE *in)
+{
+  uint64_t value;
+  value = (uint64_t)fgetc(in) | ((uint64_t)fgetc(in)<<8) |
+          ((uint64_t)fgetc(in)<<16) | ((uint64_t)fgetc(in)<<24)
+          | ( (uint64_t)fgetc(in)<<32) | ( (uint64_t)fgetc(in)<<40)
+          | ( (uint64_t)fgetc(in)<<48) | ((uint64_t)fgetc(in)<<54);
+  return value;
+}
+
+
+// cleanup(): a function that cleans allocated memory inside structs
+// arguments: a pointer to Dos header object
+// returns: none
+void cleanup(dos_header_t *dosHeader)
+{
+  free(dosHeader->dataDirectory);
+  for(int i = 0; i < dosHeader->pe.numberOfSections; i++)
+  {
+    free(dosHeader->section_table[i].name);
+  }
+  free(dosHeader->section_table);
+}
+
+// rva_to_offset(): converts an RVA address to a file offset.
+// arguments: the number of sections, rva and pointer to sections
+// returns: converted file offset, or 0 if rva is 0, or -1 if it fails.
+unsigned int rva_to_offset(int numberOfSections, unsigned int rva, section_table_t *sections)
+{
+  if(rva == 0) return 0;
+  unsigned int sumAddr;
+
+  for (int i = 0; i < numberOfSections; i++) 
+  {
+    sumAddr = sections[i].virtualAddr + sections[i].sizeOfRawData;
+    if ( rva >= sections[i].virtualAddr && (rva <= sumAddr) ) {
+        return  sections[i].ptrToRawData + (rva - sections[i].virtualAddr);
+    }
+  }
+ 
+    return -1;
+}
+
+// print_pe_characteristics(): takes in a flags characteristics and prints them
+// arguments: a WORD sized integer
+// returns: none
 void print_pe_characteristics(uint16_t ch)
 {
   if( ch & (IMAGE_FILE_DLL) )
@@ -133,9 +224,11 @@ void print_pe_characteristics(uint16_t ch)
   {
     printf("     IMAGE_FILE_UP_SYSTEM_ONLY\n");
   }
-
 }
 
+// print_dllcharacteristics(): takes in a flags characteristics and prints them
+// arguments: a WORD sized integer
+// returns: none
 void print_dllcharacteristics(uint16_t ch){
   if( ch & (IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA ) )
   {
@@ -183,6 +276,9 @@ void print_dllcharacteristics(uint16_t ch){
   }
 }
 
+// print_magic(): prints the type of a PE image
+// arguments: a WORD sized integer
+// returns: none
 void print_magic(uint16_t magic)
 {
   switch (magic)
@@ -200,6 +296,10 @@ void print_magic(uint16_t magic)
     break;
   }
 }
+
+// print_machine(): prints the machine type of a PE image
+// arguments: a WORD sized integer
+// returns: none
 void print_machine(uint16_t mach)
 {
   switch (mach)
@@ -240,6 +340,10 @@ void print_machine(uint16_t mach)
     break;
   }
 }
+
+// print_subsystem(): prints the subsystem of a PE
+// arguments: a WORD sized integer
+// returns: none
 void print_subsystem(uint16_t system){
   switch (system)
   {
@@ -304,83 +408,17 @@ void print_subsystem(uint16_t system){
   }
 }
 
+// print_section_characteristics(): prints the flags set on a section
+// arguments: a DWORD sized integer
+// returns: none
 void print_section_characteristics(uint32_t ch){
-  for(int i = 0; i < 35; i++){
-    if(ch & (section_flags_arr[i])){
+  for(int i = 0; i < 35; i++)
+  {
+    if(ch & (section_flags_arr[i]))
+    {
       printf("          %s\n", section_flags_str[i]);
     }
   }
-}
-
-
-
-
-char *read_str(FILE *in, int count){
-  char *ch = malloc(sizeof(char)*count);
-  char byte[0];
-  for(int i = 0; i < count; i++)
-  {
-    byte[0] = fgetc(in);
-    strcat(ch, byte);
-  }
-  return ch;
-}
-
-uint64_t *read_int(FILE *in, int bytes, int count){
-  uint64_t *ch = malloc(sizeof(int)*count);
-  for(int i = 0; i < count; i++)
-  {
-    ch[i] = fgetc(in);
-  }
-  return ch;
-}
-//-------------------------------------------
-// A reminder:
-//  A byte is      8 bits, 
-// a word is       2 bytes (16 bits), 
-// a doubleword is 4 bytes (32 bits), 
-// a quadword is   8 bytes (64 bits).
-//--------------------------------------------
-// read8_le(): reads an 8bit integer
-// arguments: a file stream to read from
-// return: an 8 bit integer
-uint8_t  read8_le(FILE *in){
-  uint8_t value;
-  value = fgetc(in);
-  return value;
-}
-
-// read16_le(): reads an 16bit little-endian integer
-// arguments: a file stream to read from
-// return: an 16 bit integer
-uint16_t  read16_le(FILE *in)
-{
-  uint16_t value;
-  value = fgetc(in) | (fgetc(in)<<8);
-  return value;
-}
-
-// read32_le(): reads an 32bit little-endian integer
-// arguments: a file stream to read from
-// return: an 32 bit integer
-uint32_t  read32_le(FILE *in)
-{
-  uint32_t value;
-  value = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
-  return value;
-}
-
-// read64_le(): reads an 64bit little-endian integer
-// arguments: a file stream to read from
-// return: an 64 bit integer
-uint64_t  read64_le(FILE *in)
-{
-  uint64_t value;
-  value = (uint64_t)fgetc(in) | ((uint64_t)fgetc(in)<<8) |
-          ((uint64_t)fgetc(in)<<16) | ((uint64_t)fgetc(in)<<24)
-          | ( (uint64_t)fgetc(in)<<32) | ( (uint64_t)fgetc(in)<<40)
-          | ( (uint64_t)fgetc(in)<<48) | ((uint64_t)fgetc(in)<<54);
-  return value;
 }
 
 // printf_info(): a function to print out all content of parsed PE file
@@ -388,10 +426,9 @@ uint64_t  read64_le(FILE *in)
 // return: none
 void print_info(dos_header_t *dosHeader)
 {
- 
-  printf("==============\n");
-  printf("magic: %c%c\n", (0xff & dosHeader->magic), ( dosHeader->magic>>8) );
-  printf("el_fanew: %x\n", dosHeader->e_lfanew);
+
+  printf("DOS Magic bytes: %c%c\n", (0xff & dosHeader->magic), ( dosHeader->magic>>8) );
+  printf("PE Offset:       %x\n", dosHeader->e_lfanew);
 
   printf("\n=== PE header information ===\n");
   printf("Signature:        0x%x (%c%c) \n",  dosHeader->pe.signature, 
@@ -449,16 +486,24 @@ void print_info(dos_header_t *dosHeader)
 
   printf("\n========================\n");
   printf("Data Tables \n");
-  for(int i = 0; i < 15; i++){
+  for(int i = 0; i < 15; i++)
+  {
+      if(dosHeader->dataDirectory[i].virtualAddr == 0) continue;
+
       printf("%s:\n", dataTable[i]);
-      printf("      Virtual Address: %x\n",  dosHeader->pe.optionalHeader.dataDirectory[i].virtualAddr  );
-      printf("      Size:            %x\n",  dosHeader->pe.optionalHeader.dataDirectory[i].size);
+      printf("      Virtual Address: %x (offset: %x)\n", dosHeader->dataDirectory[i].virtualAddr,
+                                         rva_to_offset(dosHeader->pe.numberOfSections, 
+                                               dosHeader->dataDirectory[i].virtualAddr, 
+                                               dosHeader->section_table) );
+
+      printf("      Size:            %x\n",  dosHeader->dataDirectory[i].size);
   }  
 
   printf("\n========================\n");
   printf("Sections: \n");
 
-  for(int i = 0; i < dosHeader->pe.numberOfSections ;i++ ){
+  for(int i = 0; i < dosHeader->pe.numberOfSections ;i++ )
+  {
       printf("   Name: %s\n", dosHeader->section_table[i].name );
       printf("       VirtualAddress: %x\n", dosHeader->section_table[i].virtualAddr );
       printf("       VirtualSize:    %x\n", dosHeader->section_table[i].virtualSize );
@@ -470,23 +515,14 @@ void print_info(dos_header_t *dosHeader)
       printf("       NumberOfLinenumbers:   %x\n", dosHeader->section_table[i].numberOfLineNum );
       printf("       Characteristics:   %x\n", dosHeader->section_table[i].characteristics );
       print_section_characteristics(dosHeader->section_table[i].characteristics);
-
-      free(dosHeader->section_table[i].name); // remove this and implement cleanup function
   }
-  free(dosHeader->section_table); // remove this and implement cleanup function
-
-  printf("\n==================\n");
-
 }
 
-
-// read_pe():
-// The main function responsible for reading PE headers
-// arguments: a pointer to a FILE stream, and a DOS header structure
-// return: none
-void read_pe(FILE *in, dos_header_t *dosHeader)
+// read_dos(): reads DOS Header values from a file
+// arguments: a FILE stream object, a pointer to a Dos header struct
+// returns: none
+void read_dos(FILE *in, dos_header_t *dosHeader)
 {
-
   // Reading DOS Header
   dosHeader->magic      = read16_le(in);
   dosHeader->e_cblp     = read16_le(in);
@@ -502,7 +538,6 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
   dosHeader->e_cs       = read16_le(in);
   dosHeader->e_lfarlc   = read16_le(in);
   dosHeader->e_ovno     = read16_le(in);
-
   // these headers may not be useful for the time being
   // due to some of them being reserved
   dosHeader->e_res      = read64_le(in);
@@ -510,12 +545,17 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
   dosHeader->e_oeminfo  = read16_le(in);
   dosHeader->e_res2     = read64_le(in); // this is repeated on purpose since
   dosHeader->e_res2     = read64_le(in); // most PE files have this field as zero
-  dosHeader->e_res2     = read32_le(in);
+  dosHeader->e_res2     = read32_le(in); // i'll fix it later.
   /////////////////////////////////////////////
   dosHeader->e_lfanew   = read32_le(in);
+}
 
-  if( fseek(in, dosHeader->e_lfanew, SEEK_SET) != -1)
-  {  
+
+// read_pe(): reads in PE header information
+// arguments: a pointer to a FILE stream, and a DOS header structure
+// return: none
+void read_pe(FILE *in, dos_header_t *dosHeader)
+{
     // PE header
     dosHeader->pe.signature          = read32_le(in);
     dosHeader->pe.machine            = read16_le(in);
@@ -545,12 +585,12 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
       dosHeader->pe.optionalHeader.imageBase        = read32_le(in);
     }
     
-    dosHeader->pe.optionalHeader.sectionAlignment = read32_le(in);
-    dosHeader->pe.optionalHeader.fileAlignment    = read32_le(in);
-    dosHeader->pe.optionalHeader.majorOSVer       = read16_le(in);
-    dosHeader->pe.optionalHeader.minorOSVer       = read16_le(in);
-    dosHeader->pe.optionalHeader.majorImageVer    = read16_le(in);
-    dosHeader->pe.optionalHeader.minorImageVer    = read16_le(in);
+    dosHeader->pe.optionalHeader.sectionAlignment  = read32_le(in);
+    dosHeader->pe.optionalHeader.fileAlignment     = read32_le(in);
+    dosHeader->pe.optionalHeader.majorOSVer        = read16_le(in);
+    dosHeader->pe.optionalHeader.minorOSVer        = read16_le(in);
+    dosHeader->pe.optionalHeader.majorImageVer     = read16_le(in);
+    dosHeader->pe.optionalHeader.minorImageVer     = read16_le(in);
     dosHeader->pe.optionalHeader.majorSubsystemVer = read16_le(in);
     dosHeader->pe.optionalHeader.minorSubsystemVer = read16_le(in);
     dosHeader->pe.optionalHeader.win32VersionVal   = read32_le(in);
@@ -574,31 +614,53 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
     }
     dosHeader->pe.optionalHeader.loaderFlags         = read32_le(in);
     dosHeader->pe.optionalHeader.numberOfRvaAndSizes = read32_le(in);
+}
 
+// read_dataDir(): reads in Data Directories information
+// arguments: a pointer to a FILE stream, and a DOS header structure
+// return: none
+void read_dataDir(FILE *in, dos_header_t * dosHeader)
+{
     // Reading Data Directories
-    dosHeader->pe.optionalHeader.dataDirectory = malloc(sizeof(data_directory_t) 
-                                     * dosHeader->pe.optionalHeader.numberOfRvaAndSizes );
+    dosHeader->dataDirectory = malloc(
+          sizeof(data_directory_t) * dosHeader->pe.optionalHeader.numberOfRvaAndSizes );
 
-    for(int i = 0; i < dosHeader->pe.optionalHeader.numberOfRvaAndSizes ; i++){
-        dosHeader->pe.optionalHeader.dataDirectory[i].virtualAddr = read32_le(in);
-        dosHeader->pe.optionalHeader.dataDirectory[i].size = read32_le(in);
+    for(int i = 0; i < dosHeader->pe.optionalHeader.numberOfRvaAndSizes ; i++)
+    {
+        dosHeader->dataDirectory[i].virtualAddr = read32_le(in);
+        dosHeader->dataDirectory[i].size = read32_le(in);
     }
+}
 
+// read_sections(): reads in sections information
+// arguments: a pointer to a FILE stream, and a DOS header structure
+// return: none
+void read_sections(FILE *in, dos_header_t *dosHeader){
     // Reading Sections data
     dosHeader->section_table = malloc(
       sizeof(section_table_t) * dosHeader->pe.numberOfSections  );
-    for(uint16_t i = 0; i < dosHeader->pe.numberOfSections; i++){
-        dosHeader->section_table[i].name = read_str(in, 8);
-        dosHeader->section_table[i].virtualSize = read32_le(in);
-        dosHeader->section_table[i].virtualAddr = read32_le(in);
-        dosHeader->section_table[i].sizeOfRawData = read32_le(in);
-        dosHeader->section_table[i].ptrToRawData  = read32_le(in);
-        dosHeader->section_table[i].ptrToReloc    = read32_le(in);
-        dosHeader->section_table[i].ptrToLineNum  = read32_le(in);
+
+    for(uint16_t i = 0; i < dosHeader->pe.numberOfSections; i++)
+    {
+        dosHeader->section_table[i].name            = read_str(in, 8);
+        dosHeader->section_table[i].virtualSize     = read32_le(in);
+        dosHeader->section_table[i].virtualAddr     = read32_le(in);
+        dosHeader->section_table[i].sizeOfRawData   = read32_le(in);
+        dosHeader->section_table[i].ptrToRawData    = read32_le(in);
+        dosHeader->section_table[i].ptrToReloc      = read32_le(in);
+        dosHeader->section_table[i].ptrToLineNum    = read32_le(in);
         dosHeader->section_table[i].numberOfReloc   = read16_le(in);
         dosHeader->section_table[i].numberOfLineNum = read16_le(in);
         dosHeader->section_table[i].characteristics = read32_le(in);
     }
+
+}
+
+// read_exportDir(): reads in Export directory information
+// arguments: a pointer to a FILE stream, and a DOS header structure
+// return: none
+void read_exportDir(FILE *in, dos_header_t *dosHeader)
+{
     // dosHeader->exportDir.exportFlags = read32_le(in);
     // dosHeader->exportDir.timeStamp = read32_le(in);
     // dosHeader->exportDir.majorVer  = read16_le(in);
@@ -610,11 +672,6 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
     // dosHeader->exportDir.exportAddrTableRVA = read32_le(in);
     // dosHeader->exportDir.namePtrRVA = read32_le(in);
     // dosHeader->exportDir.ordTableRVA = read32_le(in);
-
-    // printf("at offset: %x \n ", ftell(in));
-    // exit(0);
-    
-
-  }
-
 }
+
+

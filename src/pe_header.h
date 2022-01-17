@@ -4,10 +4,7 @@
 #ifndef PE_HEADER_H
 #define PE_HEADER_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
+#include "headers.h"
 
 // export table
 typedef struct export_directory_t{
@@ -26,58 +23,56 @@ typedef struct export_directory_t{
 
 // section table
 typedef struct section_table_t{
-  char      *name;
-  uint32_t  virtualSize;
-  uint32_t  virtualAddr;
-  uint32_t  sizeOfRawData;
-  uint32_t  ptrToRawData;
-  uint32_t  ptrToReloc;
-  uint32_t  ptrToLineNum;
-  uint32_t  numberOfReloc;
-  uint32_t  numberOfLineNum;
-  uint32_t  characteristics;
+  char       *name;
+  uint32_t    virtualSize;
+  uint32_t    virtualAddr;
+  uint32_t    sizeOfRawData;
+  uint32_t    ptrToRawData;
+  uint32_t    ptrToReloc;
+  uint32_t    ptrToLineNum;
+  uint32_t    numberOfReloc;
+  uint32_t    numberOfLineNum;
+  uint32_t    characteristics;
 }section_table_t;
 
 // Data Directory 
 typedef struct data_directory_t{
-  uint32_t virtualAddr;   // The RVA is the address of the table relative 
-                          // to the base address of the image when the table is loaded
-  uint32_t size;
+  uint32_t    virtualAddr; 
+  uint32_t    size;
 }data_directory_t;
 
 // Optional Header Image
 typedef struct optional_header_t{
-  uint16_t  magic;  
-  uint8_t   majorLinkerVer;
-  uint8_t   minorLinkerVer;
-  uint32_t  sizeOfCode;
-  uint32_t  sizeOfInitializedData;
-  uint32_t  sizeOfUninitializedData;
-  uint32_t  entryPoint;
-  uint32_t  baseOfCode;
-  uint32_t  baseOfData;
-  uint64_t  imageBase;
-  uint32_t  sectionAlignment;
-  uint32_t  fileAlignment;
-  uint16_t  majorOSVer;
-  uint16_t  minorOSVer;
-  uint16_t 	majorImageVer; 	
-  uint16_t 	minorImageVer;	
-  uint16_t 	majorSubsystemVer; 
-  uint16_t 	minorSubsystemVer; 
-  uint32_t 	win32VersionVal; 	
-  uint32_t 	sizeOfImage; 		
-  uint32_t 	sizeOfHeaders; 		
-  uint32_t 	checkSum; 			
-  uint16_t 	subsystem; 			
-  uint16_t 	dllCharacteristics; 	
-  uint64_t 	sizeOfStackReserve; 	
-  uint64_t 	sizeOfStackCommit; 	
-  uint64_t 	sizeOfHeapReserve; 	
-  uint64_t 	sizeOfHeapCommit; 	
-  uint32_t 	loaderFlags; 		
-  uint32_t 	numberOfRvaAndSizes;
-  data_directory_t   *dataDirectory;
+  uint16_t    magic;  
+  uint8_t     majorLinkerVer;
+  uint8_t     minorLinkerVer;
+  uint32_t    sizeOfCode;
+  uint32_t    sizeOfInitializedData;
+  uint32_t    sizeOfUninitializedData;
+  uint32_t    entryPoint;
+  uint32_t    baseOfCode;
+  uint32_t    baseOfData;
+  uint64_t    imageBase;
+  uint32_t    sectionAlignment;
+  uint32_t    fileAlignment;
+  uint16_t    majorOSVer;
+  uint16_t    minorOSVer;
+  uint16_t 	  majorImageVer; 	
+  uint16_t 	  minorImageVer;	
+  uint16_t 	  majorSubsystemVer; 
+  uint16_t 	  minorSubsystemVer; 
+  uint32_t 	  win32VersionVal; 	
+  uint32_t 	  sizeOfImage; 		
+  uint32_t 	  sizeOfHeaders; 		
+  uint32_t 	  checkSum; 			
+  uint16_t 	  subsystem; 			
+  uint16_t 	  dllCharacteristics; 	
+  uint64_t 	  sizeOfStackReserve; 	
+  uint64_t 	  sizeOfStackCommit; 	
+  uint64_t 	  sizeOfHeapReserve; 	
+  uint64_t 	  sizeOfHeapCommit; 	
+  uint32_t 	  loaderFlags; 		
+  uint32_t 	  numberOfRvaAndSizes;
 } optional_header_t;
 
 
@@ -111,36 +106,58 @@ typedef struct dos_header_t{
   uint16_t	e_cs;		    // Initial (relative) CS value
   uint16_t	e_lfarlc;	  // File address of relocation table
   uint16_t	e_ovno;		  // Overloay number
-  uint64_t	e_res;	  // Reserved uint16_ts (4 uint16_ts)
+  uint64_t	e_res;	    // Reserved uint16_ts (4 uint16_ts)
   uint16_t	e_oemid;		// OEM identifier (for e_oeminfo)
   uint16_t	e_oeminfo;	// OEM information; e_oemid specific
-  uint64_t	e_res2;	// Reserved uint16_ts (10 uint16_ts)
+  uint64_t	e_res2;	    // Reserved uint16_ts (10 uint16_ts)
   uint32_t  e_lfanew;   // Offset to start of PE header 
-  pe_header_t pe;
-  section_table_t   *section_table;
-  export_directory_t exportDir;  
+  pe_header_t         pe;
+  section_table_t    *section_table;
+  data_directory_t   *dataDirectory;
+  export_directory_t  exportDir;
+  // import directory
+  // resources directory
+  // base relocation table
+  // debug table
+  // tls table
+  // load config table
+  // iat table
+  // delay import descriptor
 }dos_header_t;
 
+// convert an RVA to a file offset
+unsigned int 
+rva_to_offset(int numberOfSections, 
+              unsigned int rva, 
+              section_table_t *sections);
 
 // functions to output PE info
-void print_info(dos_header_t *dosHeader);
-void print_pe_characteristics(uint16_t ch);
-void print_machine(uint16_t mach);
-void print_magic(uint16_t magic);
-void print_subsystem(uint16_t system);
-void print_dllcharacteristics(uint16_t ch);
-void print_section_characteristics(uint32_t ch);
+void      print_info(dos_header_t *dosHeader);
+void      print_pe_characteristics(uint16_t ch);
+void      print_machine(uint16_t mach);
+void      print_magic(uint16_t magic);
+void      print_subsystem(uint16_t system);
+void      print_dllcharacteristics(uint16_t ch);
+void      print_section_characteristics(uint32_t ch);
 
-// functions to read from FILE stream
+// functions to read header section from file
+void      read_dos(FILE *in, dos_header_t *dosHeader);
 void      read_pe(FILE *in, dos_header_t *dosHeader);
-void      read_OpionalHeader(FILE *in);
+void      read_dataDir(FILE *in, dos_header_t *dosHeader);
+void      read_sections(FILE *in, dos_header_t *dosHeader);
+void      read_exportDir(FILE *in, dos_header_t *dosHeader);
+
+// functions to read little endian data (chars and ints)
 char     *read_str(FILE *in, int count);
-uint64_t *read_int(FILE *in, int bytes, int count);
-uint32_t  read_elfnew(FILE *in);
 uint8_t   read8_le(FILE *in);
 uint16_t  read16_le(FILE *in);
 uint32_t  read32_le(FILE *in);
 uint64_t  read64_le(FILE *in);
+
+
+// cleanup function
+void      cleanup(dos_header_t *dosHeader);
+
 
 // Machine types
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types

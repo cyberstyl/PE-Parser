@@ -1,6 +1,7 @@
 // main.c:
 //    main block of PErser program
 
+#include "headers.h"
 #include "pe_header.h"
 
 int main(int argc, char* argv[])
@@ -28,13 +29,24 @@ int main(int argc, char* argv[])
       }      
 
       printf("showing file: %s \n\n", argv[i]);
+      read_dos(in, &dosHeader);
+      if( fseek(in, dosHeader.e_lfanew, SEEK_SET) == -1)
+      {  
+        printf("Error during file reading.\n");
+        exit(-1);
+      }
+
       read_pe(in, &dosHeader);
+      read_dataDir(in, &dosHeader);
+      read_sections(in, &dosHeader);
+      read_exportDir(in, &dosHeader);
       print_info(&dosHeader);
+      
+      
+      cleanup(&dosHeader);
       fclose(in);
     }
-  }
-
-  // if(in != NULL) fclose(in);
+  }  
 
   return 0;
 }
