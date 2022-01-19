@@ -4,11 +4,6 @@
 //
 #include "pe_header.h"
 
-// Disable warning for fopen() under visual studio
-#ifdef _MSC_VER
-#pragma warning(disable:4996)
-#endif
-
 // Data Directories Types
 char dataTable[][25] = { "Export Table",
                       "Import Table",
@@ -27,19 +22,10 @@ char dataTable[][25] = { "Export Table",
                       "CLR Runtime Header",
                       "Reserved, must be zero"};
 
-uint32_t section_flags_arr[] = {0x00000008,
-0x00000020, 0x00000040, 0x00000080, 0x00000100,
-0x00000200, 0x00000800, 0x00001000, 0x00008000,
-0x00020000, 0x00020000, 0x00040000, 0x00080000,
-0x00100000, 0x00200000, 0x00300000, 0x00400000,
-0x00500000, 0x00600000, 0x00700000, 0x00800000,
-0x00900000, 0x00A00000, 0x00B00000, 0x00C00000,
-0x00D00000, 0x00E00000, 0x01000000, 0x02000000,
-0x04000000, 0x08000000, 0x10000000, 0x20000000,
-0x40000000, 0x80000000};
-
 
 // header section types
+// https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#section-table-section-headers
+
 char section_flags_str[][33] = { "IMAGE_SCN_TYPE_NO_PAD",
 "IMAGE_SCN_CNT_CODE", "IMAGE_SCN_CNT_INITIALIZED_DATA",
 "IMAGE_SCN_CNT_UNINITIALIZED_ DATA", "IMAGE_SCN_LNK_OTHER",
@@ -59,28 +45,70 @@ char section_flags_str[][33] = { "IMAGE_SCN_TYPE_NO_PAD",
 "IMAGE_SCN_MEM_SHARED", "IMAGE_SCN_MEM_EXECUTE",
 "IMAGE_SCN_MEM_READ", "IMAGE_SCN_MEM_WRITE"};
 
+uint32_t section_flags_arr[] = {0x00000008,
+0x00000020, 0x00000040, 0x00000080, 0x00000100,
+0x00000200, 0x00000800, 0x00001000, 0x00008000,
+0x00020000, 0x00020000, 0x00040000, 0x00080000,
+0x00100000, 0x00200000, 0x00300000, 0x00400000,
+0x00500000, 0x00600000, 0x00700000, 0x00800000,
+0x00900000, 0x00A00000, 0x00B00000, 0x00C00000,
+0x00D00000, 0x00E00000, 0x01000000, 0x02000000,
+0x04000000, 0x08000000, 0x10000000, 0x20000000,
+0x40000000, 0x80000000};
+
+// Image PE File type
+// https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics
+char image_file_str[][34] = {"IMAGE_FILE_RELOCS_STRIPPED", "IMAGE_FILE_EXECUTABLE_IMAGE", 
+                      "IMAGE_FILE_LINE_NUMS_STRIPPED", "IMAGE_FILE_LOCAL_SYMS_STRIPPED", 
+                      "IMAGE_FILE_AGGRESSIVE_WS_TRIM", "IMAGE_FILE_LARGE_ADDRESS_AWARE", 
+                      "IMAGE_FILE_BYTES_REVERSED_LO", "IMAGE_FILE_32BIT_MACHINE", 
+                      "IMAGE_FILE_DEBUG_STRIPPED","IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP", 
+                      "IMAGE_FILE_NET_RUN_FROM_SWAP", "IMAGE_FILE_SYSTEM", "IMAGE_FILE_DLL", 
+                      "IMAGE_FILE_UP_SYSTEM_ONLY", "IMAGE_FILE_BYTES_REVERSED_HI"};
+
+uint16_t image_file_arr[] = {0x0001, 0x0002, 0x0004,
+                    0x0008, 0x0010, 0x0020, 0x0080, 0x0100,
+                    0x0200, 0x0400, 0x0800, 0x1000, 0x2000,
+                    0x4000, 0x8000};
+
+// DLL Characteristics
+char image_dll_str[][46] = {"IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA",
+                      "IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE",
+                      "IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY",
+                      "IMAGE_DLLCHARACTERISTICS_NX_COMPAT",		
+                      "IMAGE_DLLCHARACTERISTICS_NO_ISOLATION",
+                      "IMAGE_DLLCHARACTERISTICS_NO_SEH",  		
+                      "IMAGE_DLLCHARACTERISTICS_NO_BIND",
+                      "IMAGE_DLLCHARACTERISTICS_APPCONTAINER",
+                      "IMAGE_DLLCHARACTERISTICS_WDM_DRIVER",
+                      "IMAGE_DLLCHARACTERISTICS_GUARD_CF",
+                      "IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE"};
+
+uint16_t image_dll_arr[] = {0x0020, 0x0040, 0x0080, 0x0100,
+0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000, 0x8000};
+
 
 //-------------------------------------------
-// A reminder:
-//  A byte is      8 bits, 
+// A reminder
+// A byte is       8 bits, 
 // a word is       2 bytes (16 bits), 
 // a doubleword is 4 bytes (32 bits), 
 // a quadword is   8 bytes (64 bits).
-//--------------------------------------------
+//-------------------------------------------
 
 // read_str(): reads a 'count' of characters from a file
 // arguments: FILE stream to read from, count of characters to read
 // returns: pointer to a string of characters.
 char *read_str(FILE *in, int count)
 {
-  char *ch = malloc(sizeof(char)*count);
+  char *ch_ptr = malloc(sizeof(char)*count);
   char byte[0];
   for(int i = 0; i < count; i++)
   {
     byte[0] = fgetc(in);
-    strcat(ch, byte);
+    strcat(ch_ptr, byte);
   }
-  return ch;
+  return ch_ptr;
 }
 
 // read8_le(): reads an 8bit integer
@@ -88,9 +116,7 @@ char *read_str(FILE *in, int count)
 // return: an 8 bit integer
 uint8_t  read8_le(FILE *in)
 {
-  uint8_t value;
-  value = fgetc(in);
-  return value;
+  return fgetc(in);
 }
 
 // read16_le(): reads an 16bit little-endian integer
@@ -98,9 +124,7 @@ uint8_t  read8_le(FILE *in)
 // return: an 16 bit integer
 uint16_t  read16_le(FILE *in)
 {
-  uint16_t value;
-  value = fgetc(in) | (fgetc(in)<<8);
-  return value;
+  return (fgetc(in) | (fgetc(in)<<8));
 }
 
 // read32_le(): reads an 32bit little-endian integer
@@ -109,7 +133,8 @@ uint16_t  read16_le(FILE *in)
 uint32_t  read32_le(FILE *in)
 {
   uint32_t value;
-  value = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) | (fgetc(in)<<24);
+  value = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) 
+          | (fgetc(in)<<24);
   return value;
 }
 
@@ -127,7 +152,7 @@ uint64_t  read64_le(FILE *in)
 }
 
 
-// cleanup(): a function that cleans allocated memory inside structs
+// cleanup(): a function to clean allocated memory inside structs
 // arguments: a pointer to Dos header object
 // returns: none
 void cleanup(dos_header_t *dosHeader)
@@ -143,20 +168,23 @@ void cleanup(dos_header_t *dosHeader)
 // rva_to_offset(): converts an RVA address to a file offset.
 // arguments: the number of sections, rva and pointer to sections
 // returns: converted file offset, or 0 if rva is 0, or -1 if it fails.
-unsigned int rva_to_offset(int numberOfSections, unsigned int rva, section_table_t *sections)
+unsigned int rva_to_offset(int numberOfSections, 
+                           unsigned int rva, 
+                           section_table_t *sections)
 {
   if(rva == 0) return 0;
   unsigned int sumAddr;
 
-  for (int i = 0; i < numberOfSections; i++) 
+  for (int idx = 0; idx < numberOfSections; idx++) 
   {
-    sumAddr = sections[i].virtualAddr + sections[i].sizeOfRawData;
-    if ( rva >= sections[i].virtualAddr && (rva <= sumAddr) ) {
-        return  sections[i].ptrToRawData + (rva - sections[i].virtualAddr);
+    sumAddr = sections[idx].virtualAddr + sections[idx].sizeOfRawData;
+    
+    if ( rva >= sections[idx].virtualAddr && (rva <= sumAddr) )
+    {
+      return  sections[idx].ptrToRawData + (rva - sections[idx].virtualAddr);
     }
   }
- 
-    return -1;
+  return -1;
 }
 
 // print_pe_characteristics(): takes in a flags characteristics and prints them
@@ -164,115 +192,22 @@ unsigned int rva_to_offset(int numberOfSections, unsigned int rva, section_table
 // returns: none
 void print_pe_characteristics(uint16_t ch)
 {
-  if( ch & (IMAGE_FILE_DLL) )
+  for(int idx = 0; idx < 15; idx++)
   {
-    printf("     IMAGE_FILE_DLL \n");
-  }
-  if(ch & (IMAGE_FILE_EXECUTABLE_IMAGE) )
-  {
-    printf("     IMAGE_FILE_EXECUTABLE_IMAGE \n");
-  }
-  if(ch & (IMAGE_FILE_DEBUG_STRIPPED) )
-  {
-    printf("     IMAGE_FILE_DEBUG_STRIPPED\n");
-  }
-  if(ch & (IMAGE_FILE_RELOCS_STRIPPED) )
-  {
-    printf("     IMAGE_FILE_RELOCS_STRIPPED\n");
-  }
-  if(ch & (IMAGE_FILE_LINE_NUMS_STRIPPED) )
-  {
-    printf("     IMAGE_FILE_LINE_NUMS_STRIPPED\n");
-  }
-  if(ch & (IMAGE_FILE_LOCAL_SYMS_STRIPPED) )
-  {
-    printf("     IMAGE_FILE_LOCAL_SYMS_STRIPPED\n");
-  }
-  if(ch & (IMAGE_FILE_AGGRESSIVE_WS_TRIM) )
-  {
-    printf("     IMAGE_FILE_AGGRESSIVE_WS_TRIM\n");
-  }
-  if(ch & (IMAGE_FILE_LARGE_ADDRESS_AWARE) )
-  {
-    printf("     IMAGE_FILE_LARGE_ADDRESS_AWARE\n");
-  }
-  if(ch & (IMAGE_FILE_BYTES_REVERSED_LO) )
-  {
-    printf("     IMAGE_FILE_BYTES_REVERSED_LO\n");
-  }
-  if(ch & (IMAGE_FILE_32BIT_MACHINE) )
-  {
-    printf("     IMAGE_FILE_32BIT_MACHINE\n");
-  }
-  if(ch & (IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP) )
-  {
-    printf("     IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP\n");
-  }
-  if(ch & (IMAGE_FILE_NET_RUN_FROM_SWAP) )
-  {
-    printf("     IMAGE_FILE_NET_RUN_FROM_SWAP\n");
-  }
-  if(ch & (IMAGE_FILE_SYSTEM) )
-  {
-    printf("     IMAGE_FILE_SYSTEM\n");
-  }
-  if(ch & (IMAGE_FILE_BYTES_REVERSED_HI) )
-  {
-    printf("     IMAGE_FILE_BYTES_REVERSED_HI\n");
-  }
-  if(ch & (IMAGE_FILE_UP_SYSTEM_ONLY) )
-  {
-    printf("     IMAGE_FILE_UP_SYSTEM_ONLY\n");
+    if(ch & (image_file_arr[idx]))
+     printf("     %s\n", image_file_str[idx]);
   }
 }
 
 // print_dllcharacteristics(): takes in a flags characteristics and prints them
 // arguments: a WORD sized integer
 // returns: none
-void print_dllcharacteristics(uint16_t ch){
-  if( ch & (IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA ) )
+void print_dllcharacteristics(uint16_t ch)
+{
+  for(int idx = 0; idx < 11; idx++)
   {
-    printf("     IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA  \n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE \n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_NX_COMPAT) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_NX_COMPAT\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_NO_ISOLATION) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_NO_ISOLATION\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_NO_SEH) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_NO_SEH\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_NO_BIND) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_NO_BIND\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_APPCONTAINER) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_APPCONTAINER\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_WDM_DRIVER) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_WDM_DRIVER\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_GUARD_CF) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_GUARD_CF\n");
-  }
-  if(ch & (IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE) )
-  {
-    printf("     IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE\n");
+    if(ch & (image_dll_arr[idx]))
+     printf("     %s\n", image_dll_str[idx]);
   }
 }
 
@@ -426,7 +361,6 @@ void print_section_characteristics(uint32_t ch){
 // return: none
 void print_info(dos_header_t *dosHeader)
 {
-
   printf("DOS Magic bytes: %c%c\n", (0xff & dosHeader->magic), ( dosHeader->magic>>8) );
   printf("PE Offset:       %x\n", dosHeader->e_lfanew);
 
@@ -538,8 +472,8 @@ void read_dos(FILE *in, dos_header_t *dosHeader)
   dosHeader->e_cs       = read16_le(in);
   dosHeader->e_lfarlc   = read16_le(in);
   dosHeader->e_ovno     = read16_le(in);
-  // these headers may not be useful for the time being
-  // due to some of them being reserved
+
+  // some of the next fields are reserved/aren't used
   dosHeader->e_res      = read64_le(in);
   dosHeader->e_oemid    = read16_le(in);
   dosHeader->e_oeminfo  = read16_le(in);
@@ -556,64 +490,71 @@ void read_dos(FILE *in, dos_header_t *dosHeader)
 // return: none
 void read_pe(FILE *in, dos_header_t *dosHeader)
 {
-    // PE header
-    dosHeader->pe.signature          = read32_le(in);
-    dosHeader->pe.machine            = read16_le(in);
-    dosHeader->pe.numberOfSections   = read16_le(in);
-    dosHeader->pe.timeStamp          = read32_le(in);
-    dosHeader->pe.symTablePtr        = read32_le(in);
-    dosHeader->pe.numberOfSym        = read32_le(in);
-    dosHeader->pe.optionalHeaderSize = read16_le(in);
-    dosHeader->pe.characteristics    = read16_le(in);
-    
-    // optional header (Standard Fields)
-    dosHeader->pe.optionalHeader.magic          = read16_le(in);
-    dosHeader->pe.optionalHeader.majorLinkerVer = read8_le(in);
-    dosHeader->pe.optionalHeader.minorLinkerVer = read8_le(in);
-    dosHeader->pe.optionalHeader.sizeOfCode     = read32_le(in);
-    dosHeader->pe.optionalHeader.sizeOfInitializedData    = read32_le(in);
-    dosHeader->pe.optionalHeader.sizeOfUninitializedData  = read32_le(in);
-    dosHeader->pe.optionalHeader.entryPoint = read32_le(in);
-    dosHeader->pe.optionalHeader.baseOfCode = read32_le(in);
 
-    // Optional Header Windows-Specific Fields 
-    if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
-    {
-      dosHeader->pe.optionalHeader.imageBase        = read64_le(in);
-    } else {
-      dosHeader->pe.optionalHeader.baseOfData       = read32_le(in);
-      dosHeader->pe.optionalHeader.imageBase        = read32_le(in);
-    }
-    
-    dosHeader->pe.optionalHeader.sectionAlignment  = read32_le(in);
-    dosHeader->pe.optionalHeader.fileAlignment     = read32_le(in);
-    dosHeader->pe.optionalHeader.majorOSVer        = read16_le(in);
-    dosHeader->pe.optionalHeader.minorOSVer        = read16_le(in);
-    dosHeader->pe.optionalHeader.majorImageVer     = read16_le(in);
-    dosHeader->pe.optionalHeader.minorImageVer     = read16_le(in);
-    dosHeader->pe.optionalHeader.majorSubsystemVer = read16_le(in);
-    dosHeader->pe.optionalHeader.minorSubsystemVer = read16_le(in);
-    dosHeader->pe.optionalHeader.win32VersionVal   = read32_le(in);
-    dosHeader->pe.optionalHeader.sizeOfImage       = read32_le(in);
-    dosHeader->pe.optionalHeader.sizeOfHeaders     = read32_le(in);
-    dosHeader->pe.optionalHeader.checkSum          = read32_le(in);
-    dosHeader->pe.optionalHeader.subsystem         = read16_le(in);
-    dosHeader->pe.optionalHeader.dllCharacteristics= read16_le(in);
-    
-    if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
-    {
-      dosHeader->pe.optionalHeader.sizeOfStackReserve= read64_le(in);
-      dosHeader->pe.optionalHeader.sizeOfStackCommit = read64_le(in);
-      dosHeader->pe.optionalHeader.sizeOfHeapReserve = read64_le(in);
-      dosHeader->pe.optionalHeader.sizeOfHeapCommit  = read64_le(in);      
-    } else {
-      dosHeader->pe.optionalHeader.sizeOfStackReserve= read32_le(in);
-      dosHeader->pe.optionalHeader.sizeOfStackCommit = read32_le(in);
-      dosHeader->pe.optionalHeader.sizeOfHeapReserve = read32_le(in);
-      dosHeader->pe.optionalHeader.sizeOfHeapCommit  = read32_le(in);
-    }
-    dosHeader->pe.optionalHeader.loaderFlags         = read32_le(in);
-    dosHeader->pe.optionalHeader.numberOfRvaAndSizes = read32_le(in);
+  if( fseek(in, dosHeader->e_lfanew, SEEK_SET) == -1)
+  {  
+    printf("Error during file reading.\n");
+    exit(-1);
+  } 
+
+  // PE header
+  dosHeader->pe.signature          = read32_le(in);
+  dosHeader->pe.machine            = read16_le(in);
+  dosHeader->pe.numberOfSections   = read16_le(in);
+  dosHeader->pe.timeStamp          = read32_le(in);
+  dosHeader->pe.symTablePtr        = read32_le(in);
+  dosHeader->pe.numberOfSym        = read32_le(in);
+  dosHeader->pe.optionalHeaderSize = read16_le(in);
+  dosHeader->pe.characteristics    = read16_le(in);
+  
+  // optional header (Standard Fields)
+  dosHeader->pe.optionalHeader.magic          = read16_le(in);
+  dosHeader->pe.optionalHeader.majorLinkerVer = read8_le(in);
+  dosHeader->pe.optionalHeader.minorLinkerVer = read8_le(in);
+  dosHeader->pe.optionalHeader.sizeOfCode     = read32_le(in);
+  dosHeader->pe.optionalHeader.sizeOfInitializedData    = read32_le(in);
+  dosHeader->pe.optionalHeader.sizeOfUninitializedData  = read32_le(in);
+  dosHeader->pe.optionalHeader.entryPoint = read32_le(in);
+  dosHeader->pe.optionalHeader.baseOfCode = read32_le(in);
+
+  // Optional Header Windows-Specific Fields 
+  if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
+  {
+    dosHeader->pe.optionalHeader.imageBase        = read64_le(in);
+  } else {
+    dosHeader->pe.optionalHeader.baseOfData       = read32_le(in);
+    dosHeader->pe.optionalHeader.imageBase        = read32_le(in);
+  }
+  
+  dosHeader->pe.optionalHeader.sectionAlignment  = read32_le(in);
+  dosHeader->pe.optionalHeader.fileAlignment     = read32_le(in);
+  dosHeader->pe.optionalHeader.majorOSVer        = read16_le(in);
+  dosHeader->pe.optionalHeader.minorOSVer        = read16_le(in);
+  dosHeader->pe.optionalHeader.majorImageVer     = read16_le(in);
+  dosHeader->pe.optionalHeader.minorImageVer     = read16_le(in);
+  dosHeader->pe.optionalHeader.majorSubsystemVer = read16_le(in);
+  dosHeader->pe.optionalHeader.minorSubsystemVer = read16_le(in);
+  dosHeader->pe.optionalHeader.win32VersionVal   = read32_le(in);
+  dosHeader->pe.optionalHeader.sizeOfImage       = read32_le(in);
+  dosHeader->pe.optionalHeader.sizeOfHeaders     = read32_le(in);
+  dosHeader->pe.optionalHeader.checkSum          = read32_le(in);
+  dosHeader->pe.optionalHeader.subsystem         = read16_le(in);
+  dosHeader->pe.optionalHeader.dllCharacteristics= read16_le(in);
+  
+  if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
+  {
+    dosHeader->pe.optionalHeader.sizeOfStackReserve= read64_le(in);
+    dosHeader->pe.optionalHeader.sizeOfStackCommit = read64_le(in);
+    dosHeader->pe.optionalHeader.sizeOfHeapReserve = read64_le(in);
+    dosHeader->pe.optionalHeader.sizeOfHeapCommit  = read64_le(in);      
+  } else {
+    dosHeader->pe.optionalHeader.sizeOfStackReserve= read32_le(in);
+    dosHeader->pe.optionalHeader.sizeOfStackCommit = read32_le(in);
+    dosHeader->pe.optionalHeader.sizeOfHeapReserve = read32_le(in);
+    dosHeader->pe.optionalHeader.sizeOfHeapCommit  = read32_le(in);
+  }
+  dosHeader->pe.optionalHeader.loaderFlags         = read32_le(in);
+  dosHeader->pe.optionalHeader.numberOfRvaAndSizes = read32_le(in);
 }
 
 // read_dataDir(): reads in Data Directories information
@@ -621,38 +562,40 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
 // return: none
 void read_dataDir(FILE *in, dos_header_t * dosHeader)
 {
-    // Reading Data Directories
-    dosHeader->dataDirectory = malloc(
-          sizeof(data_directory_t) * dosHeader->pe.optionalHeader.numberOfRvaAndSizes );
+  int dirs = dosHeader->pe.optionalHeader.numberOfRvaAndSizes;
 
-    for(int i = 0; i < dosHeader->pe.optionalHeader.numberOfRvaAndSizes ; i++)
-    {
-        dosHeader->dataDirectory[i].virtualAddr = read32_le(in);
-        dosHeader->dataDirectory[i].size = read32_le(in);
-    }
+  // Reading Data Directories
+  dosHeader->dataDirectory = malloc(sizeof(data_directory_t) * dirs );
+
+  for(int idx = 0; idx < dirs ; idx++)
+  {
+    dosHeader->dataDirectory[idx].virtualAddr = read32_le(in);
+    dosHeader->dataDirectory[idx].size = read32_le(in);
+  }
 }
 
 // read_sections(): reads in sections information
 // arguments: a pointer to a FILE stream, and a DOS header structure
 // return: none
-void read_sections(FILE *in, dos_header_t *dosHeader){
-    // Reading Sections data
-    dosHeader->section_table = malloc(
-      sizeof(section_table_t) * dosHeader->pe.numberOfSections  );
+void read_sections(FILE *in, dos_header_t *dosHeader)
+{
+  int sections = dosHeader->pe.numberOfSections;
+  // Reading Sections data
+  dosHeader->section_table = malloc(sizeof(section_table_t) * sections  );
 
-    for(uint16_t i = 0; i < dosHeader->pe.numberOfSections; i++)
-    {
-        dosHeader->section_table[i].name            = read_str(in, 8);
-        dosHeader->section_table[i].virtualSize     = read32_le(in);
-        dosHeader->section_table[i].virtualAddr     = read32_le(in);
-        dosHeader->section_table[i].sizeOfRawData   = read32_le(in);
-        dosHeader->section_table[i].ptrToRawData    = read32_le(in);
-        dosHeader->section_table[i].ptrToReloc      = read32_le(in);
-        dosHeader->section_table[i].ptrToLineNum    = read32_le(in);
-        dosHeader->section_table[i].numberOfReloc   = read16_le(in);
-        dosHeader->section_table[i].numberOfLineNum = read16_le(in);
-        dosHeader->section_table[i].characteristics = read32_le(in);
-    }
+  for(int idx = 0; idx < sections; idx++)
+  {
+    dosHeader->section_table[idx].name            = read_str(in, 8);
+    dosHeader->section_table[idx].virtualSize     = read32_le(in);
+    dosHeader->section_table[idx].virtualAddr     = read32_le(in);
+    dosHeader->section_table[idx].sizeOfRawData   = read32_le(in);
+    dosHeader->section_table[idx].ptrToRawData    = read32_le(in);
+    dosHeader->section_table[idx].ptrToReloc      = read32_le(in);
+    dosHeader->section_table[idx].ptrToLineNum    = read32_le(in);
+    dosHeader->section_table[idx].numberOfReloc   = read16_le(in);
+    dosHeader->section_table[idx].numberOfLineNum = read16_le(in);
+    dosHeader->section_table[idx].characteristics = read32_le(in);
+  }
 
 }
 
@@ -675,3 +618,34 @@ void read_exportDir(FILE *in, dos_header_t *dosHeader)
 }
 
 
+void load_file(int argc, char *argv[])
+{
+  FILE *in;
+  dos_header_t dosHeader;
+
+  for(int idx = 1; idx < argc; idx++)
+  {
+    in = fopen(argv[idx], "rb");
+    if(in == NULL)
+    {
+      printf("Can't open '%s' file, exiting\n", argv[idx]);
+      continue;
+    }      
+
+    // read headers
+    read_dos(in, &dosHeader);    
+    read_pe(in, &dosHeader);
+    read_dataDir(in, &dosHeader);
+    read_sections(in, &dosHeader);
+    read_exportDir(in, &dosHeader);
+    
+
+    // test printing information
+    printf("showing file: %s \n\n", argv[idx]);
+    print_info(&dosHeader);
+    
+    // cleanup
+    cleanup(&dosHeader);
+    fclose(in);
+  }
+}

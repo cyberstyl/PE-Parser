@@ -4,6 +4,11 @@
 #ifndef PE_HEADER_H
 #define PE_HEADER_H
 
+// Disable warning for fopen() under visual studio
+#ifdef _MSC_VER
+#pragma warning(disable:4996)
+#endif
+
 #include "headers.h"
 
 // export table
@@ -130,6 +135,7 @@ unsigned int
 rva_to_offset(int numberOfSections, 
               unsigned int rva, 
               section_table_t *sections);
+void load_file(int argc, char *argv[]);
 
 // functions to output PE info
 void      print_info(dos_header_t *dosHeader);
@@ -171,24 +177,6 @@ void      cleanup(dos_header_t *dosHeader);
 #define IMAGE_FILE_MACHINE_EBC   		   0xebc    //    EFI byte code
 
 
-// Characteristics
-// https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics
-#define IMAGE_FILE_RELOCS_STRIPPED        		0x0001
-#define IMAGE_FILE_EXECUTABLE_IMAGE       		0x0002
-#define IMAGE_FILE_LINE_NUMS_STRIPPED     		0x0004
-#define IMAGE_FILE_LOCAL_SYMS_STRIPPED    		0x0008
-#define IMAGE_FILE_AGGRESSIVE_WS_TRIM     		0x0010
-#define IMAGE_FILE_LARGE_ADDRESS_AWARE    		0x0020
-#define IMAGE_FILE_BYTES_REVERSED_LO      		0x0080
-#define IMAGE_FILE_32BIT_MACHINE          		0x0100
-#define IMAGE_FILE_DEBUG_STRIPPED         		0x0200
-#define IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP    0x0400
-#define IMAGE_FILE_NET_RUN_FROM_SWAP     	  	0x0800
-#define IMAGE_FILE_SYSTEM     			       		0x1000
-#define IMAGE_FILE_DLL     					         	0x2000
-#define IMAGE_FILE_UP_SYSTEM_ONLY       			0x4000
-#define IMAGE_FILE_BYTES_REVERSED_HI       		0x8000
-
 // PE optional image
 #define OPTIONAL_IMAGE_PE32      0x10b
 #define OPTIONAL_IMAGE_PE32_plus 0x20b
@@ -209,20 +197,6 @@ void      cleanup(dos_header_t *dosHeader);
 #define IMAGE_SUBSYSTEM_EFI_ROM     		13      	    	//	An EFI ROM image
 #define IMAGE_SUBSYSTEM_XBOX     			  14              //  XBOX
 #define IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION    16  //  Windows boot application. 
-
-
-// Characteristics
-#define IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA   0x0020   // Image can handle a high entropy 64-bit virtual address space.
-#define IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE      0x0040   // DLL can be relocated at load time.
-#define IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY   0x0080   // Code Integrity checks are enforced.
-#define IMAGE_DLLCHARACTERISTICS_NX_COMPAT         0x0100   // Image is NX compatible.
-#define IMAGE_DLLCHARACTERISTICS_NO_ISOLATION      0x0200   // Isolation aware, but do not isolate the image.
-#define IMAGE_DLLCHARACTERISTICS_NO_SEH            0x0400   // Does not use structured exception (SE) handling. No SE handler may be called in this image.
-#define IMAGE_DLLCHARACTERISTICS_NO_BIND           0x0800   // Do not bind the image.
-#define IMAGE_DLLCHARACTERISTICS_APPCONTAINER      0x1000   // Image must execute in an AppContainer.
-#define IMAGE_DLLCHARACTERISTICS_WDM_DRIVER        0x2000   // A WDM driver.
-#define IMAGE_DLLCHARACTERISTICS_GUARD_CF          0x4000   // Image supports Control Flow Guard.
-#define IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE   0x8000  // Terminal Server aware. 
 
 
 #endif
