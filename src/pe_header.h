@@ -131,14 +131,11 @@ typedef struct dos_header_t{
 }dos_header_t;
 
 // convert an RVA to a file offset
-unsigned int 
-rva_to_offset(int numberOfSections, 
-              unsigned int rva, 
-              section_table_t *sections);
-void load_file(int argc, char *argv[]);
+unsigned int rva_to_offset(int numberOfSections, 
+                           unsigned int rva, 
+                           section_table_t *sections);
 
 // functions to output PE info
-void      print_info(dos_header_t *dosHeader);
 void      print_pe_characteristics(uint16_t ch);
 void      print_machine(uint16_t mach);
 void      print_magic(uint16_t magic);
@@ -152,13 +149,6 @@ void      read_pe(FILE *in, dos_header_t *dosHeader);
 void      read_dataDir(FILE *in, dos_header_t *dosHeader);
 void      read_sections(FILE *in, dos_header_t *dosHeader);
 void      read_exportDir(FILE *in, dos_header_t *dosHeader);
-
-// functions to read little endian data (chars and ints)
-char     *read_str(FILE *in, int count);
-uint8_t   read8_le(FILE *in);
-uint16_t  read16_le(FILE *in);
-uint32_t  read32_le(FILE *in);
-uint64_t  read64_le(FILE *in);
 
 
 // cleanup function
@@ -192,8 +182,8 @@ void      cleanup(dos_header_t *dosHeader);
 #define IMAGE_SUBSYSTEM_NATIVE_WINDOWS    8  	    //  Native Win9x driver
 #define IMAGE_SUBSYSTEM_WINDOWS_CE_GUI   	9   		//  Windows CE
 #define IMAGE_SUBSYSTEM_EFI_APPLICATION   10   		//  An Extensible Firmware Interface (EFI) application
-#define IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER    11  //  An EFI driver with boot services
-#define IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER     	  12  // 	An EFI driver with run-time services
+#define IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER    11   //  An EFI driver with boot services
+#define IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER     	   12   // 	An EFI driver with run-time services
 #define IMAGE_SUBSYSTEM_EFI_ROM     		13      	    	//	An EFI ROM image
 #define IMAGE_SUBSYSTEM_XBOX     			  14              //  XBOX
 #define IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION    16  //  Windows boot application. 

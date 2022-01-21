@@ -2,3 +2,5 @@
 perser
 pe-interface.o
 build/pe_interface.o
+build/misc.o
+.gitignore
