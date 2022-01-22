@@ -63,21 +63,23 @@ uint64_t  read64_le(FILE *in)
 
 void print_sections(dos_header_t *dosHeader)
 {
+  section_table_t *sections;
+  sections = dosHeader->section_table;
   printf("\nSections: \n");
 
   for(int idx = 0; idx < dosHeader->pe.numberOfSections ;idx++ )
   {
-      printf("   Name: %s\n", dosHeader->section_table[idx].name );
-      printf("       VirtualAddress: %x\n", dosHeader->section_table[idx].virtualAddr );
-      printf("       VirtualSize:    %x\n", dosHeader->section_table[idx].virtualSize );
-      printf("       SizeOfRawData:  %x\n", dosHeader->section_table[idx].sizeOfRawData );
-      printf("       PointerToRawData:   %x\n", dosHeader->section_table[idx].ptrToRawData );
-      printf("       PointerToRelactons: %x\n", dosHeader->section_table[idx].ptrToReloc );
-      printf("       PointerToLinenumbers:  %x\n", dosHeader->section_table[idx].ptrToLineNum );
-      printf("       NumberOfRelocations:   %x\n", dosHeader->section_table[idx].numberOfReloc );
-      printf("       NumberOfLinenumbers:   %x\n", dosHeader->section_table[idx].numberOfLineNum );
-      printf("       Characteristics:   %x\n", dosHeader->section_table[idx].characteristics );
-      print_section_characteristics(dosHeader->section_table[idx].characteristics);
+      printf("   Name: %s\n", sections[idx].name );
+      printf("       VirtualAddress:        %X\n", sections[idx].virtualAddr );
+      printf("       VirtualSize:           %X\n", sections[idx].virtualSize );
+      printf("       SizeOfRawData:         %X\n", sections[idx].sizeOfRawData );
+      printf("       PointerToRawData:      %X\n", sections[idx].ptrToRawData );
+      printf("       PointerToRelactons:    %X\n", sections[idx].ptrToReloc );
+      printf("       PointerToLinenumbers:  %X\n", sections[idx].ptrToLineNum );
+      printf("       NumberOfRelocations:   %X\n", sections[idx].numberOfReloc );
+      printf("       NumberOfLinenumbers:   %X\n", sections[idx].numberOfLineNum );
+      printf("       Characteristics:       %X\n", sections[idx].characteristics );
+      print_section_characteristics(sections[idx].characteristics);
   }
 }
 
@@ -101,6 +103,7 @@ void load_file(int argc, char *argv[])
     read_pe(in, &dosHeader);
     read_dataDir(in, &dosHeader);
     read_sections(in, &dosHeader);
+    read_dataOffset(&dosHeader);
     read_exportDir(in, &dosHeader);
     
 
@@ -110,6 +113,7 @@ void load_file(int argc, char *argv[])
     print_headers(&dosHeader);
     print_dataTables(&dosHeader);
     print_sections(&dosHeader);
+    print_exports(&dosHeader);
 
     // cleanup
     cleanup(&dosHeader);
@@ -210,7 +214,24 @@ char dataTable[][25] = { "Export Table",
       if(vAddress == 0) continue;
       printf("  %s: \n", dataTable[idx]);
       offset = rva_to_offset(sections, vAddress, dosHeader->section_table);
-      printf("     Address: 0x%X   Offset: %X\n", vAddress, offset);
+      printf("     Address: 0x%X \tOffset: %X\n", vAddress, offset);
       printf("        Size: 0x%X \n", dosHeader->dataDirectory[idx].size);
   }
+}
+
+
+void print_exports(dos_header_t *dosHeader)
+{
+  printf("\nExport Directory \n");
+  printf("    Flags:           0x%X\n", dosHeader->exportDir.exportFlags);
+  printf("    TimeStamp:       0x%X\n", dosHeader->exportDir.timeStamp);
+  printf("    MajorVersion:    0x%X\n", dosHeader->exportDir.majorVer);
+  printf("    MinorVersion:    0x%X\n", dosHeader->exportDir.minorVer);
+  printf("    Name RVA:        0x%X\n", dosHeader->exportDir.nameRVA);
+  printf("    OrdinalBase:     0x%X\n", dosHeader->exportDir.ordBase);
+  printf("    AddressTable Entries:  0x%X\n", dosHeader->exportDir.addrTableEntries);
+  printf("    NumberOfNames:         0x%X\n", dosHeader->exportDir.numberOfNamePointers);
+  printf("    ExportTable Entries:   0x%X\n", dosHeader->exportDir.exportAddrTableRVA);
+  printf("    AddressOfNames:        0x%X\n", dosHeader->exportDir.namePtrRVA);
+  printf("    OrdinalTable RVA:      0x%X\n", dosHeader->exportDir.ordTableRVA);
 }

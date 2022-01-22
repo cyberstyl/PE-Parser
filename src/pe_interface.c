@@ -98,12 +98,11 @@ void cleanup(dos_header_t *dosHeader)
 // rva_to_offset(): converts an RVA address to a file offset.
 // arguments: the number of sections, rva and pointer to sections
 // returns: converted file offset, or 0 if rva is 0, or -1 if it fails.
-unsigned int rva_to_offset(int numberOfSections, 
-                           unsigned int rva, 
+uint64_t rva_to_offset(int numberOfSections, uint64_t rva, 
                            section_table_t *sections)
 {
   if(rva == 0) return 0;
-  unsigned int sumAddr;
+  uint64_t sumAddr;
 
   for (int idx = 0; idx < numberOfSections; idx++) 
   {
@@ -395,7 +394,7 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
 // read_dataDir(): reads in Data Directories information
 // arguments: a pointer to a FILE stream, and a DOS header structure
 // return: none
-void read_dataDir(FILE *in, dos_header_t * dosHeader)
+void read_dataDir(FILE *in, dos_header_t *dosHeader)
 {
   int dirs = dosHeader->pe.optionalHeader.numberOfRvaAndSizes;
 
@@ -406,6 +405,20 @@ void read_dataDir(FILE *in, dos_header_t * dosHeader)
   {
     dosHeader->dataDirectory[idx].virtualAddr = read32_le(in);
     dosHeader->dataDirectory[idx].size = read32_le(in);
+    // dosHeader->dataDirectory[idx].offset = rva_to_offset(dosHeader->pe.numberOfSections,
+    //                               dosHeader->dataDirectory[idx].virtualAddr,
+    //                               dosHeader->section_table);
+  }
+}
+
+void read_dataOffset(dos_header_t *dosHeader){
+  int dirs = dosHeader->pe.optionalHeader.numberOfRvaAndSizes;
+
+  for(int idx = 0; idx < dirs ; idx++)
+  {
+    dosHeader->dataDirectory[idx].offset = rva_to_offset(dosHeader->pe.numberOfSections,
+                                  dosHeader->dataDirectory[idx].virtualAddr,
+                                  dosHeader->section_table);
   }
 }
 
@@ -439,18 +452,31 @@ void read_sections(FILE *in, dos_header_t *dosHeader)
 // return: none
 void read_exportDir(FILE *in, dos_header_t *dosHeader)
 {
-    // dosHeader->exportDir.exportFlags = read32_le(in);
-    // dosHeader->exportDir.timeStamp = read32_le(in);
-    // dosHeader->exportDir.majorVer  = read16_le(in);
-    // dosHeader->exportDir.minorVer  = read16_le(in);
-    // dosHeader->exportDir.nameRVA   = read32_le(in);
-    // dosHeader->exportDir.ordBase   = read32_le(in);
-    // dosHeader->exportDir.addrTableEntries = read32_le(in);
-    // dosHeader->exportDir.numberOfNamePointers = read32_le(in);
-    // dosHeader->exportDir.exportAddrTableRVA = read32_le(in);
-    // dosHeader->exportDir.namePtrRVA = read32_le(in);
-    // dosHeader->exportDir.ordTableRVA = read32_le(in);
+  uint32_t offset;
+  
+  offset = dosHeader->dataDirectory[0].offset;
+  
+  if(offset < 0 ) return;
+
+  if( fseek(in, offset, SEEK_SET) == -1)
+  {
+    printf("fseek failed in read exports.\n");
+    return;
+  }
+  
+  dosHeader->exportDir.exportFlags  = read32_le(in);
+  dosHeader->exportDir.timeStamp    = read32_le(in);
+  dosHeader->exportDir.majorVer     = read16_le(in);
+  dosHeader->exportDir.minorVer     = read16_le(in);
+  dosHeader->exportDir.nameRVA      = read32_le(in);
+  dosHeader->exportDir.ordBase      = read32_le(in);
+  dosHeader->exportDir.addrTableEntries     = read32_le(in);
+  dosHeader->exportDir.numberOfNamePointers = read32_le(in);
+  dosHeader->exportDir.exportAddrTableRVA   = read32_le(in);
+  dosHeader->exportDir.namePtrRVA           = read32_le(in);
+  dosHeader->exportDir.ordTableRVA          = read32_le(in);
 }
+
 
 
 /*  PE specific functions

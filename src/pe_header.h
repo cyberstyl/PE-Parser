@@ -11,6 +11,15 @@
 
 #include "headers.h"
 
+// Import Table
+typedef struct import_directory_t{
+  uint32_t origFirstThunk;
+  uint32_t timeStamp;
+  uint32_t forwarderChain;
+  uint32_t name;
+  uint32_t firstThunk;
+}import_directory_t;
+
 // export table
 typedef struct export_directory_t{
   uint32_t    exportFlags;
@@ -42,6 +51,7 @@ typedef struct section_table_t{
 
 // Data Directory 
 typedef struct data_directory_t{
+  uint64_t    offset;
   uint32_t    virtualAddr; 
   uint32_t    size;
 }data_directory_t;
@@ -131,8 +141,7 @@ typedef struct dos_header_t{
 }dos_header_t;
 
 // convert an RVA to a file offset
-unsigned int rva_to_offset(int numberOfSections, 
-                           unsigned int rva, 
+uint64_t rva_to_offset(int numberOfSections, uint64_t rva, 
                            section_table_t *sections);
 
 // functions to output PE info
@@ -142,14 +151,15 @@ void      print_magic(uint16_t magic);
 void      print_subsystem(uint16_t system);
 void      print_dllcharacteristics(uint16_t ch);
 void      print_section_characteristics(uint32_t ch);
+void      print_exports(dos_header_t *dosHeader);
 
 // functions to read header section from file
 void      read_dos(FILE *in, dos_header_t *dosHeader);
 void      read_pe(FILE *in, dos_header_t *dosHeader);
 void      read_dataDir(FILE *in, dos_header_t *dosHeader);
 void      read_sections(FILE *in, dos_header_t *dosHeader);
+void      read_dataOffset(dos_header_t *dosHeader);
 void      read_exportDir(FILE *in, dos_header_t *dosHeader);
-
 
 // cleanup function
 void      cleanup(dos_header_t *dosHeader);
