@@ -6,24 +6,6 @@
 
 #include "headers.h"
 
-// Data Directories Types
-char dataTable[][25] = { "Export Table",
-                      "Import Table",
-                      "Resource Table",
-                      "Exception Table",
-                      "Certificate Table",
-                      "Base Relocation Table",
-                      "Debug",
-                      "Architecture",
-                      "Global Ptr",
-                      "TLS Table",
-                      "Load Config Table",
-                      "Bound Import",
-                      "IAT",
-                      "Delay Import Descriptor",
-                      "CLR Runtime Header",
-                      "Reserved, must be zero"};
-
 
 // header section types
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#section-table-section-headers
@@ -469,3 +451,14 @@ void read_exportDir(FILE *in, dos_header_t *dosHeader)
     // dosHeader->exportDir.namePtrRVA = read32_le(in);
     // dosHeader->exportDir.ordTableRVA = read32_le(in);
 }
+
+
+/*  PE specific functions
+  After having read the entire PE file, the functions here can be used
+  to read or re·trieve specific values form the PE file, such as:
+  - get_ImageBase(): to get the hex value of the image base
+  - get_sectionsCount(): to get the number of sections in a PE
+  - get_peOffset(): to get the offset of the PE header in the file
+  - ...etc
+*/
+

@@ -17,98 +17,94 @@ On Linux you can build and run the program in following steps.
 $ git clone https://github.com/adabz/PErser
 $ cd PErser/
 $ make
-$ ./perser ../samples-pe/Chakra.dll 
-showing file: ../samples-pe/Chakra.dll 
+$ ./perser ../samples-pe/explorer.exe 
+showing file: ../samples-pe/explorer.exe 
 
-DOS Magic bytes: MZ
-PE Offset:       f0
+Magic bytes:            MZ
+PE Offset               E8
 
-=== PE header information ===
-Signature:        0x4550 (PE) 
-Machine:          (14c)  IMAGE_FILE_MACHINE_I386
-number of sections:      7
-TimeDateStamp:           0x90aa65d2
-PointerToSymbolTable:    0x0
-NumberOfSymbols:         0
-Size of OpionalHeader:   0xe0
-Characteristics:         0x2102
-     IMAGE_FILE_DLL 
-     IMAGE_FILE_EXECUTABLE_IMAGE 
-     IMAGE_FILE_32BIT_MACHINE
+PE header information
+ Signature:             0x4550 (PE) 
+ Machine:               (8664)  IMAGE_FILE_MACHINE_AMD64
+ Sections:              8
+ Time Stamp:            0x57899981
+ Symbol Table Pointer:  0x0
+ Symbols:               0
+ OpionalHeader Size:    240 (0xF0)
+ Characteristics:       0x22
+     IMAGE_FILE_EXECUTABLE_IMAGE
+     IMAGE_FILE_LARGE_ADDRESS_AWARE
 
-=== Optional header standard fields ===
-Magic:      10b (PE) 
-MajorLinkerVersion:      0xe
-MinorLinkerVersion:      0x14
-SizeOfCode:              0x546000
-SizeOfInitializedData:   0x150e00
-SizeOfUninitializedData: 0x0
-EntryPoint:       0x285440
-BaseOfCode:       0x1000
-
-=== Optional header windows-specific fields ===
-BaseOfData:           0x547000
-ImageBase:              0x10000000
-SectionAlignment:       0x1000
-FileAlignment:          0x200
-MajorOperatingSystemVersion:      0xa
-MinorOperatingSystemVersion:      0x0
-MajorImageVersion:      0xa
-MinorImageVersion:      0x0
-MajorSubsystemVersion:  0xa
-MinorSubsystemVersion:  0x0
-Win32VersionValue:      0x0
-SizeOfImage:            0x69c000
-SizeOfHeaders:   0x400
-CheckSum:        0x5921cf
-Subsystem:    (3)   IMAGE_SUBSYSTEM_WINDOWS_CUI
-DllCharacteristics:        
-     IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE 
+Optional Header
+Magic:      20B (PE+) 
+MajorLinkerVersion:      0xE
+MinorLinkerVersion:      0x0
+SizeOfCode:              0x1A8000
+SizeOfInitializedData:   0x2C4A00
+SizeOfUninitializedData: 0x200
+EntryPoint:              0x9EB60
+BaseOfCode:              0x1000
+ImageBase:               0x140000000
+SectionAlignment:        0x1000
+FileAlignment:           0x200
+MajorOSVersion:          0xA
+MinorOSVersion:          0x0
+MajorImageVersion:       0xA
+MinorImageVersion:       0x0
+MajorSubsysVersion:      0xA
+MinorSubsysVersion:      0x0
+Win32VersionValue:       0x0
+SizeOfImage:             0x472000
+SizeOfHeaders:           0x400
+CheckSum:                0x482A3B
+Subsystem:               (2)   IMAGE_SUBSYSTEM_WINDOWS_GUI
+DllCharacteristics:           
+     IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
+     IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY
      IMAGE_DLLCHARACTERISTICS_NX_COMPAT
      IMAGE_DLLCHARACTERISTICS_GUARD_CF
-SizeOfStackReserve:     0x40000
-SizeOfStackCommit:      0x1000
-SizeOfHeapReserve:      0x100000
-SizeOfHeapCommit:       0x1000
-LoaderFlags:            0x0
-NumberOfRvaAndSizes:    0x10
+     IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE
+SizeOfStackReserve:      0x80000
+SizeOfStackCommit:       0xe000
+SizeOfHeapReserve:       0x100000
+SizeOfHeapCommit:        0x1000
+LoaderFlags:             0x0
+NumberOfRvaAndSizes:     16
 
-========================
-Data Tables 
-Export Table:
-      Virtual Address: 545ba0 (offset: 544fa0)
-      Size:            145e
-Import Table:
-      Virtual Address: 65f6c8 (offset: 5558c8)
-      Size:            3d4
-Resource Table:
-      Virtual Address: 665000 (offset: 558c00)
-      Size:            3e8
-Base Relocation Table:
-      Virtual Address: 666000 (offset: 559000)
-      Size:            35ab4
-Debug:
-      Virtual Address: b16f0 (offset: b0af0)
-      Size:            54
-TLS Table:
-      Virtual Address: 18cb0 (offset: 180b0)
-      Size:            18
-Load Config Table:
-      Virtual Address: 17d50 (offset: 17150)
-      Size:            ac
-IAT:
-      Virtual Address: 65f000 (offset: 555200)
-      Size:            6c4
-Delay Import Descriptor:
-      Virtual Address: 545864 (offset: 544c64)
-      Size:            c0
+Data Tables: 
+  Import Table: 
+     Address: 0x21B4B8   Offset: 2198B8
+        Size: 0x5DC 
+  Resource Table: 
+     Address: 0x23F000   Offset: 236C00
+        Size: 0x22E0D8 
+  Exception Table: 
+     Address: 0x228000   Offset: 221400
+        Size: 0x1524C 
+  Certificate : 
+     Address: 0x468E00   Offset: 460A00
+        Size: 0xC118 
+  Base Relocation: 
+     Address: 0x46E000   Offset: 464E00
+        Size: 0x3F0C 
+  Debug Table: 
+     Address: 0x1E2B10   Offset: 1E0F10
+        Size: 0x38 
+  Load Config : 
+     Address: 0x1B9AE0   Offset: 1B7EE0
+        Size: 0xD0 
+  Import Address: 
+     Address: 0x1C8FB0   Offset: 1C73B0
+        Size: 0x2040 
+  Delay Import Desc.: 
+     Address: 0x21A258   Offset: 218658
+        Size: 0x440 
 
-========================
 Sections: 
    Name: .text
        VirtualAddress: 1000
-       VirtualSize:    545ffe
-       SizeOfRawData:  546000
+       VirtualSize:    1a7ed7
+       SizeOfRawData:  1a8000
        PointerToRawData:   400
        PointerToRelactons: 0
        PointerToLinenumbers:  0
@@ -118,11 +114,36 @@ Sections:
           IMAGE_SCN_CNT_CODE
           IMAGE_SCN_MEM_EXECUTE
           IMAGE_SCN_MEM_READ
+   Name: .imrsiv
+       VirtualAddress: 1a9000
+       VirtualSize:    4
+       SizeOfRawData:  0
+       PointerToRawData:   0
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   c0000080
+          IMAGE_SCN_CNT_UNINITIALIZED_ DATA
+          IMAGE_SCN_MEM_READ
+          IMAGE_SCN_MEM_WRITE
+   Name: .rdata
+       VirtualAddress: 1aa000
+       VirtualSize:    780e4
+       SizeOfRawData:  78200
+       PointerToRawData:   1a8400
+       PointerToRelactons: 0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:   40000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
    Name: .data
-       VirtualAddress: 547000
-       VirtualSize:    117338
-       SizeOfRawData:  ee00
-       PointerToRawData:   546400
+       VirtualAddress: 223000
+       VirtualSize:    4dbc
+       SizeOfRawData:  e00
+       PointerToRawData:   220600
        PointerToRelactons: 0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
@@ -131,11 +152,11 @@ Sections:
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
           IMAGE_SCN_MEM_WRITE
-   Name: .idata
-       VirtualAddress: 65f000
-       VirtualSize:    3422
-       SizeOfRawData:  3600
-       PointerToRawData:   555200
+   Name: .pdata
+       VirtualAddress: 228000
+       VirtualSize:    1524c
+       SizeOfRawData:  15400
+       PointerToRawData:   221400
        PointerToRelactons: 0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
@@ -144,10 +165,10 @@ Sections:
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
    Name: .didat
-       VirtualAddress: 663000
-       VirtualSize:    a8
-       SizeOfRawData:  200
-       PointerToRawData:   558800
+       VirtualAddress: 23e000
+       VirtualSize:    3a0
+       SizeOfRawData:  400
+       PointerToRawData:   236800
        PointerToRelactons: 0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
@@ -156,23 +177,11 @@ Sections:
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
           IMAGE_SCN_MEM_WRITE
-   Name: .mrdata
-       VirtualAddress: 664000
-       VirtualSize:    1
-       SizeOfRawData:  200
-       PointerToRawData:   558a00
-       PointerToRelactons: 0
-       PointerToLinenumbers:  0
-       NumberOfRelocations:   0
-       NumberOfLinenumbers:   0
-       Characteristics:   40000040
-          IMAGE_SCN_CNT_INITIALIZED_DATA
-          IMAGE_SCN_MEM_READ
    Name: .rsrc
-       VirtualAddress: 665000
-       VirtualSize:    3e8
-       SizeOfRawData:  400
-       PointerToRawData:   558c00
+       VirtualAddress: 23f000
+       VirtualSize:    22e0d8
+       SizeOfRawData:  22e200
+       PointerToRawData:   236c00
        PointerToRelactons: 0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
@@ -181,10 +190,10 @@ Sections:
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
    Name: .reloc
-       VirtualAddress: 666000
-       VirtualSize:    35ab4
-       SizeOfRawData:  35c00
-       PointerToRawData:   559000
+       VirtualAddress: 46e000
+       VirtualSize:    3f0c
+       SizeOfRawData:  4000
+       PointerToRawData:   464e00
        PointerToRelactons: 0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0

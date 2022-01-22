@@ -17,7 +17,8 @@ uint32_t  read32_le(FILE *in);
 uint64_t  read64_le(FILE *in);
 
 void load_file(int argc, char *argv[]);
-void print_info(dos_header_t *dosHeader);
-void print_clean(dos_header_t *dosHeader);
+void print_headers(dos_header_t *dosHeader);
+void print_dataTables(dos_header_t *dosHeader);
+void print_sections(dos_header_t *dosHeader);
 
 #endif
