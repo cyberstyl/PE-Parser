@@ -196,6 +196,11 @@ Sections:
 
 ```
 
+## Bugs / Improvments
+- [ ] fseek() fails under windows
+- [ ] Visual Studio refuses to compile for a char array of size 0
+
+
 ## To-do list / Progress
 - [x] Find and read PE info.
 - [x] Determine PE file type (PE / PE+).
@@ -212,6 +217,9 @@ Sections:
 - [x] Read basic DataDirectory info.
 - [ ] Read imported functions (by name).
 - [ ] Read imported functions (by ordinal).
+- [ ] read_str() needs to be re-written.
+- [ ] print_clean() to be used in place of print_info() for cleaner output.
+- [ ] Create Getter() functions to get values from struct (get_ImageBase(), get_Sections()...) instead of reading directly from struct.
 - [x] Read Export DataDirectory section.
 - [x] Create Separate functions to read PE info.
 - [x] Add ability to read all PE files in a current or given directory.
