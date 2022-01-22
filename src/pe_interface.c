@@ -28,7 +28,7 @@ char dataTable[][25] = { "Export Table",
 // header section types
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#section-table-section-headers
 
-char section_flags_str[][33] = { "IMAGE_SCN_TYPE_NO_PAD",
+char section_flags_str[][34] = { "IMAGE_SCN_TYPE_NO_PAD",
 "IMAGE_SCN_CNT_CODE", "IMAGE_SCN_CNT_INITIALIZED_DATA",
 "IMAGE_SCN_CNT_UNINITIALIZED_ DATA", "IMAGE_SCN_LNK_OTHER",
 "IMAGE_SCN_LNK_INFO", "IMAGE_SCN_LNK_REMOVE",
@@ -60,7 +60,7 @@ uint32_t section_flags_arr[] = {0x00000008,
 
 // Image PE File type
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#characteristics
-char image_file_str[][34] = {"IMAGE_FILE_RELOCS_STRIPPED", "IMAGE_FILE_EXECUTABLE_IMAGE", 
+char image_file_str[][35] = {"IMAGE_FILE_RELOCS_STRIPPED", "IMAGE_FILE_EXECUTABLE_IMAGE", 
                       "IMAGE_FILE_LINE_NUMS_STRIPPED", "IMAGE_FILE_LOCAL_SYMS_STRIPPED", 
                       "IMAGE_FILE_AGGRESSIVE_WS_TRIM", "IMAGE_FILE_LARGE_ADDRESS_AWARE", 
                       "IMAGE_FILE_BYTES_REVERSED_LO", "IMAGE_FILE_32BIT_MACHINE", 
@@ -74,7 +74,7 @@ uint16_t image_file_arr[] = {0x0001, 0x0002, 0x0004,
                     0x4000, 0x8000};
 
 // DLL Characteristics
-char image_dll_str[][46] = {"IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA",
+char image_dll_str[][47] = {"IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA",
                       "IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE",
                       "IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY",
                       "IMAGE_DLLCHARACTERISTICS_NX_COMPAT",		
