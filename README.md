@@ -17,34 +17,36 @@ On Linux you can build and run the program in following steps.
 $ git clone https://github.com/adabz/PErser
 $ cd PErser/
 $ make
-$ ./perser ../samples-pe/explorer.exe 
-showing file: ../samples-pe/explorer.exe 
+$ ./perser ../samples-pe/Chakra.dll 
+showing file: ../samples-pe/Chakra.dll 
 
 Magic bytes:            MZ
-PE Offset               E8
+PE Offset               F0
 
 PE header information
  Signature:             0x4550 (PE) 
- Machine:               (8664)  IMAGE_FILE_MACHINE_AMD64
- Sections:              8
- Time Stamp:            0x57899981
+ Machine:               (14C)  IMAGE_FILE_MACHINE_I386
+ Sections:              7
+ Time Stamp:            0x90AA65D2
  Symbol Table Pointer:  0x0
  Symbols:               0
- OpionalHeader Size:    240 (0xF0)
- Characteristics:       0x22
+ OpionalHeader Size:    224 (0xE0)
+ Characteristics:       0x2102
      IMAGE_FILE_EXECUTABLE_IMAGE
-     IMAGE_FILE_LARGE_ADDRESS_AWARE
+     IMAGE_FILE_32BIT_MACHINE
+     IMAGE_FILE_DLL
 
 Optional Header
-Magic:      20B (PE+) 
+Magic:      10B (PE) 
 MajorLinkerVersion:      0xE
-MinorLinkerVersion:      0x0
-SizeOfCode:              0x1A8000
-SizeOfInitializedData:   0x2C4A00
-SizeOfUninitializedData: 0x200
-EntryPoint:              0x9EB60
+MinorLinkerVersion:      0x14
+SizeOfCode:              0x546000
+SizeOfInitializedData:   0x150E00
+SizeOfUninitializedData: 0x0
+EntryPoint:              0x285440
 BaseOfCode:              0x1000
-ImageBase:               0x140000000
+BaseOfData:              0x547000
+ImageBase:               0x10000000
 SectionAlignment:        0x1000
 FileAlignment:           0x200
 MajorOSVersion:          0xA
@@ -54,162 +56,160 @@ MinorImageVersion:       0x0
 MajorSubsysVersion:      0xA
 MinorSubsysVersion:      0x0
 Win32VersionValue:       0x0
-SizeOfImage:             0x472000
+SizeOfImage:             0x69C000
 SizeOfHeaders:           0x400
-CheckSum:                0x482A3B
-Subsystem:               (2)   IMAGE_SUBSYSTEM_WINDOWS_GUI
+CheckSum:                0x5921CF
+Subsystem:               (3)   IMAGE_SUBSYSTEM_WINDOWS_CUI
 DllCharacteristics:           
      IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
-     IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY
      IMAGE_DLLCHARACTERISTICS_NX_COMPAT
      IMAGE_DLLCHARACTERISTICS_GUARD_CF
-     IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE
-SizeOfStackReserve:      0x80000
-SizeOfStackCommit:       0xe000
+SizeOfStackReserve:      0x40000
+SizeOfStackCommit:       0x1000
 SizeOfHeapReserve:       0x100000
 SizeOfHeapCommit:        0x1000
 LoaderFlags:             0x0
 NumberOfRvaAndSizes:     16
 
 Data Tables: 
+  Export Table: 
+     Address: 0x545BA0  Offset: 544FA0
+        Size: 0x145E 
   Import Table: 
-     Address: 0x21B4B8   Offset: 2198B8
-        Size: 0x5DC 
+     Address: 0x65F6C8  Offset: 5558C8
+        Size: 0x3D4 
   Resource Table: 
-     Address: 0x23F000   Offset: 236C00
-        Size: 0x22E0D8 
-  Exception Table: 
-     Address: 0x228000   Offset: 221400
-        Size: 0x1524C 
-  Certificate : 
-     Address: 0x468E00   Offset: 460A00
-        Size: 0xC118 
+     Address: 0x665000  Offset: 558C00
+        Size: 0x3E8 
   Base Relocation: 
-     Address: 0x46E000   Offset: 464E00
-        Size: 0x3F0C 
+     Address: 0x666000  Offset: 559000
+        Size: 0x35AB4 
   Debug Table: 
-     Address: 0x1E2B10   Offset: 1E0F10
-        Size: 0x38 
+     Address: 0xB16F0   Offset: B0AF0
+        Size: 0x54 
+  TLS Table: 
+     Address: 0x18CB0   Offset: 180B0
+        Size: 0x18 
   Load Config : 
-     Address: 0x1B9AE0   Offset: 1B7EE0
-        Size: 0xD0 
+     Address: 0x17D50   Offset: 17150
+        Size: 0xAC 
   Import Address: 
-     Address: 0x1C8FB0   Offset: 1C73B0
-        Size: 0x2040 
+     Address: 0x65F000  Offset: 555200
+        Size: 0x6C4 
   Delay Import Desc.: 
-     Address: 0x21A258   Offset: 218658
-        Size: 0x440 
+     Address: 0x545864  Offset: 544C64
+        Size: 0xC0 
 
 Sections: 
    Name: .text
-       VirtualAddress: 1000
-       VirtualSize:    1a7ed7
-       SizeOfRawData:  1a8000
-       PointerToRawData:   400
-       PointerToRelactons: 0
+       VirtualAddress:        1000
+       VirtualSize:           545FFE
+       SizeOfRawData:         546000
+       PointerToRawData:      400
+       PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
        NumberOfLinenumbers:   0
-       Characteristics:   60000020
+       Characteristics:       60000020
           IMAGE_SCN_CNT_CODE
           IMAGE_SCN_MEM_EXECUTE
           IMAGE_SCN_MEM_READ
-   Name: .imrsiv
-       VirtualAddress: 1a9000
-       VirtualSize:    4
-       SizeOfRawData:  0
-       PointerToRawData:   0
-       PointerToRelactons: 0
-       PointerToLinenumbers:  0
-       NumberOfRelocations:   0
-       NumberOfLinenumbers:   0
-       Characteristics:   c0000080
-          IMAGE_SCN_CNT_UNINITIALIZED_ DATA
-          IMAGE_SCN_MEM_READ
-          IMAGE_SCN_MEM_WRITE
-   Name: .rdata
-       VirtualAddress: 1aa000
-       VirtualSize:    780e4
-       SizeOfRawData:  78200
-       PointerToRawData:   1a8400
-       PointerToRelactons: 0
-       PointerToLinenumbers:  0
-       NumberOfRelocations:   0
-       NumberOfLinenumbers:   0
-       Characteristics:   40000040
-          IMAGE_SCN_CNT_INITIALIZED_DATA
-          IMAGE_SCN_MEM_READ
    Name: .data
-       VirtualAddress: 223000
-       VirtualSize:    4dbc
-       SizeOfRawData:  e00
-       PointerToRawData:   220600
-       PointerToRelactons: 0
+       VirtualAddress:        547000
+       VirtualSize:           117338
+       SizeOfRawData:         EE00
+       PointerToRawData:      546400
+       PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
        NumberOfLinenumbers:   0
-       Characteristics:   c0000040
+       Characteristics:       C0000040
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
           IMAGE_SCN_MEM_WRITE
-   Name: .pdata
-       VirtualAddress: 228000
-       VirtualSize:    1524c
-       SizeOfRawData:  15400
-       PointerToRawData:   221400
-       PointerToRelactons: 0
+   Name: .idata
+       VirtualAddress:        65F000
+       VirtualSize:           3422
+       SizeOfRawData:         3600
+       PointerToRawData:      555200
+       PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
        NumberOfLinenumbers:   0
-       Characteristics:   40000040
+       Characteristics:       40000040
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
    Name: .didat
-       VirtualAddress: 23e000
-       VirtualSize:    3a0
-       SizeOfRawData:  400
-       PointerToRawData:   236800
-       PointerToRelactons: 0
+       VirtualAddress:        663000
+       VirtualSize:           A8
+       SizeOfRawData:         200
+       PointerToRawData:      558800
+       PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
        NumberOfLinenumbers:   0
-       Characteristics:   c0000040
+       Characteristics:       C0000040
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
           IMAGE_SCN_MEM_WRITE
-   Name: .rsrc
-       VirtualAddress: 23f000
-       VirtualSize:    22e0d8
-       SizeOfRawData:  22e200
-       PointerToRawData:   236c00
-       PointerToRelactons: 0
+   Name: .mrdata
+       VirtualAddress:        664000
+       VirtualSize:           1
+       SizeOfRawData:         200
+       PointerToRawData:      558A00
+       PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
        NumberOfLinenumbers:   0
-       Characteristics:   40000040
+       Characteristics:       40000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
+   Name: .rsrc
+       VirtualAddress:        665000
+       VirtualSize:           3E8
+       SizeOfRawData:         400
+       PointerToRawData:      558C00
+       PointerToRelactons:    0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:       40000040
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
    Name: .reloc
-       VirtualAddress: 46e000
-       VirtualSize:    3f0c
-       SizeOfRawData:  4000
-       PointerToRawData:   464e00
-       PointerToRelactons: 0
+       VirtualAddress:        666000
+       VirtualSize:           35AB4
+       SizeOfRawData:         35C00
+       PointerToRawData:      559000
+       PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
        NumberOfLinenumbers:   0
-       Characteristics:   42000040
+       Characteristics:       42000040
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_DISCARDABLE
           IMAGE_SCN_MEM_READ
+
+Export Directory 
+    Flags:           0x0
+    TimeStamp:       0x90AA65D2
+    MajorVersion:    0x0
+    MinorVersion:    0x0
+    Name RVA:        0x546208
+    OrdinalBase:     0x190
+    AddressTable Entries:  0xA0
+    NumberOfNames:         0xA0
+    ExportTable Entries:   0x545BC8
+    AddressOfNames:        0x545E48
+    OrdinalTable RVA:      0x5460C8
 
 ```
 
 ## Bugs / Improvments
 - [x] fseek() fails under windows
-   issue was due to how the functions read32_le(), read64_le()...etc were designed, they compiled fine under gcc, but due to opposite order of operations under visual studio compiler, the functions read/wrtote data backwards, causing invalid reads of PE header and breaking fseek().
+  - issue was due to how the functions read32_le(), read64_le()...etc were designed, they compiled fine under gcc, but due to opposite order of operations under visual studio compiler, the functions read/wrote data backwards, causing invalid reads of PE header and breaking fseek().
 - [x] Visual Studio refuses to compile for a char array of size 0
-   instead of the convulted way written in read_str() function to read a number of bytes as a string, I'e updated the function to read one byte at a time and save into an allocated memory.
+  - instead of the convulted way written in read_str() function to read a number of bytes as a string, I've updated the function to read one byte at a time and save into an allocated memory.
 
 
 ## To-do list / Progress
