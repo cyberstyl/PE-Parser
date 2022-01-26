@@ -145,9 +145,11 @@
   <ItemGroup>
     <ClCompile Include="src/main.c" />
     <ClCompile Include="src/pe_interface.c" />
+    <ClCompile Include="src\misc.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src/pe_header.h" />
+    <ClInclude Include="src\headers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

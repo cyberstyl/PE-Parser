@@ -11,12 +11,11 @@
 char *read_str(FILE *in, int count)
 {
   char *ch_ptr = malloc(sizeof(char)*count);
-  char byte[0];
   for(int i = 0; i < count; i++)
   {
-    byte[0] = fgetc(in);
-    strcat(ch_ptr, byte);
+    ch_ptr[i] = fgetc(in);
   }
+  ch_ptr[strlen(ch_ptr)] = 0;
   return ch_ptr;
 }
 
@@ -33,7 +32,10 @@ uint8_t  read8_le(FILE *in)
 // return: an 16 bit integer
 uint16_t  read16_le(FILE *in)
 {
-  return (fgetc(in) | (fgetc(in)<<8));
+  uint16_t value;
+  value = fgetc(in);
+  value |= (fgetc(in)<<8);
+  return value;
 }
 
 // read32_le(): reads an 32bit little-endian integer
@@ -42,8 +44,10 @@ uint16_t  read16_le(FILE *in)
 uint32_t  read32_le(FILE *in)
 {
   uint32_t value;
-  value = fgetc(in) | (fgetc(in)<<8) | (fgetc(in)<<16) 
-          | (fgetc(in)<<24);
+  value = fgetc(in);
+  value |= (fgetc(in)<<8);
+  value |= (fgetc(in)<<16);
+  value |= (fgetc(in)<<24);
   return value;
 }
 
@@ -53,10 +57,15 @@ uint32_t  read32_le(FILE *in)
 uint64_t  read64_le(FILE *in)
 {
   uint64_t value;
-  value = (uint64_t)fgetc(in) | ((uint64_t)fgetc(in)<<8) |
-          ((uint64_t)fgetc(in)<<16) | ((uint64_t)fgetc(in)<<24)
-          | ( (uint64_t)fgetc(in)<<32) | ( (uint64_t)fgetc(in)<<40)
-          | ( (uint64_t)fgetc(in)<<48) | ((uint64_t)fgetc(in)<<54);
+  value = (uint64_t)fgetc(in);
+  value |= ((uint64_t)fgetc(in) <<8);
+  value |= ((uint64_t)fgetc(in) <<16);
+  value |= ((uint64_t)fgetc(in) <<24);
+  value |= ((uint64_t)fgetc(in) <<32);
+  value |= ((uint64_t)fgetc(in) <<40);
+  value |= ((uint64_t)fgetc(in) <<48);
+  value |= ((uint64_t)fgetc(in) <<54);
+
   return value;
 }
 
@@ -187,7 +196,7 @@ void print_headers(dos_header_t *dosHeader)
 void print_dataTables(dos_header_t *dosHeader)
 {
   // Data Directories Types
-char dataTable[][25] = { "Export Table",
+  char dataTable[][25] = { "Export Table",
                       "Import Table",
                       "Resource Table",
                       "Exception Table",
@@ -204,11 +213,13 @@ char dataTable[][25] = { "Export Table",
                       "CLR Runtime Header",
                       "Reserved, must be zero"};
 
-  uint32_t offset, vAddress, sections;
+  uint32_t offset, vAddress, sections, tables;
   sections = dosHeader->pe.numberOfSections;
 
+  tables = dosHeader->pe.optionalHeader.numberOfRvaAndSizes;
+
   printf("\nData Tables: \n");
-  for(int idx = 0; idx < 15; idx++)
+  for(int idx = 0; idx < tables; idx++)
   {
       vAddress = dosHeader->dataDirectory[idx].virtualAddr;
       if(vAddress == 0) continue;
