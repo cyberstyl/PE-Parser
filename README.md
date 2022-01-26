@@ -206,8 +206,10 @@ Sections:
 ```
 
 ## Bugs / Improvments
-- [ ] fseek() fails under windows
-- [ ] Visual Studio refuses to compile for a char array of size 0
+- [x] fseek() fails under windows
+   issue was due to how the functions read32_le(), read64_le()...etc were designed, they compiled fine under gcc, but due to opposite order of operations under visual studio compiler, the functions read/wrtote data backwards, causing invalid reads of PE header and breaking fseek().
+- [x] Visual Studio refuses to compile for a char array of size 0
+   instead of the convulted way written in read_str() function to read a number of bytes as a string, I'e updated the function to read one byte at a time and save into an allocated memory.
 
 
 ## To-do list / Progress
@@ -226,8 +228,8 @@ Sections:
 - [x] Read basic DataDirectory info.
 - [ ] Read imported functions (by name).
 - [ ] Read imported functions (by ordinal).
-- [ ] read_str() needs to be re-written.
-- [ ] print_clean() to be used in place of print_info() for cleaner output.
+- [x] read_str() needs to be re-written.
+- [x] print_clean() to be used in place of print_info() for cleaner output.
 - [ ] Create Getter() functions to get values from struct (get_ImageBase(), get_Sections()...) instead of reading directly from struct.
 - [x] Read Export DataDirectory section.
 - [x] Create Separate functions to read PE info.
