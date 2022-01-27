@@ -20,19 +20,34 @@ typedef struct import_directory_t{
   uint32_t firstThunk;
 }import_directory_t;
 
+// export address table
+typedef struct export_address_name_t{
+  char   names[1024];
+}export_address_name_t;
+
 // export table
 typedef struct export_directory_t{
-  uint32_t    exportFlags;
-  uint32_t    timeStamp;
+  uint32_t    exportFlags;      // Reserved, must be 0. 
+  uint32_t    timeStamp;        // The time and date that the export 
+                                // data was created. 
+
   uint16_t    majorVer;
   uint16_t    minorVer;
-  uint32_t    nameRVA;
-  uint32_t    ordBase;
-  uint32_t    addrTableEntries;
+  uint32_t    nameRVA;          // The address of the ASCII string that contains
+                                // the name of the DLL.
+
+  uint32_t    ordinalBase;          // The starting ordinal number for exports in 
+                                // this image. This field specifies the 
+                                // starting ordinal number for the export 
+                                // address table. 
+
+  uint32_t    addrTableEntries;     // The number of entries in the 
+                                    // export address table. 
   uint32_t    numberOfNamePointers;
-  uint32_t    exportAddrTableRVA;
+  uint32_t    exportAddrTableRVA; // The address of the export address table,
   uint32_t    namePtrRVA;
-  uint32_t    ordTableRVA;
+  uint32_t    ordinalTableRVA;
+  export_address_name_t *exportAddr_name_t;
 }export_directory_t;
 
 // section table
@@ -160,6 +175,8 @@ void      read_dataDir(FILE *in, dos_header_t *dosHeader);
 void      read_sections(FILE *in, dos_header_t *dosHeader);
 void      read_dataOffset(dos_header_t *dosHeader);
 void      read_exportDir(FILE *in, dos_header_t *dosHeader);
+void      read_exportNames(FILE *in, dos_header_t *dosHeader);
+void      read_importDir(FILE *in, dos_header_t *dosHeader);
 
 // cleanup function
 void      cleanup(dos_header_t *dosHeader);
@@ -167,14 +184,14 @@ void      cleanup(dos_header_t *dosHeader);
 
 // Machine types
 // https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#machine-types
-#define IMAGE_FILE_MACHINE_UNKNOWN   	 0x0      //    The content of this field is assumed to be applicable to any machine type
-#define IMAGE_FILE_MACHINE_IA64   		 0x200    //    Intel Itanium processor family
-#define IMAGE_FILE_MACHINE_I386   		 0x14c    //    Intel 386 or later processors and compatible processors
-#define IMAGE_FILE_MACHINE_AMD64   		 0x8664   //    x64
-#define IMAGE_FILE_MACHINE_ARM   		   0x1c0    //    ARM little endian
-#define IMAGE_FILE_MACHINE_ARM64   		 0xaa64   //    ARM64 little endian
-#define IMAGE_FILE_MACHINE_ARMNT   		 0x1c4    //    ARM Thumb-2 little endian
-#define IMAGE_FILE_MACHINE_EBC   		   0xebc    //    EFI byte code
+#define IMAGE_FILE_MACHINE_UNKNOWN  0x0     // assumed to be applicable to any machine type
+#define IMAGE_FILE_MACHINE_IA64   	0x200   // Intel Itanium processor family
+#define IMAGE_FILE_MACHINE_I386   	0x14c   // Intel 386 or later processors and compatible processors
+#define IMAGE_FILE_MACHINE_AMD64   	0x8664  // x64
+#define IMAGE_FILE_MACHINE_ARM   		0x1c0   // ARM little endian
+#define IMAGE_FILE_MACHINE_ARM64   	0xaa64  // ARM64 little endian
+#define IMAGE_FILE_MACHINE_ARMNT   	0x1c4   // ARM Thumb-2 little endian
+#define IMAGE_FILE_MACHINE_EBC   		0xebc   // EFI byte code
 
 
 // PE optional image

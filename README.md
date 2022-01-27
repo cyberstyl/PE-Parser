@@ -17,17 +17,17 @@ On Linux you can build and run the program in following steps.
 $ git clone https://github.com/adabz/PErser
 $ cd PErser/
 $ make
-$ ./perser ../samples-pe/Chakra.dll 
-showing file: ../samples-pe/Chakra.dll 
+$ ./perser ../samples-pe/tier0_s.dll 
+showing file: ../samples-pe/tier0_s.dll 
 
 Magic bytes:            MZ
-PE Offset               F0
+PE Offset               110
 
 PE header information
  Signature:             0x4550 (PE) 
  Machine:               (14C)  IMAGE_FILE_MACHINE_I386
- Sections:              7
- Time Stamp:            0x90AA65D2
+ Sections:              5
+ Time Stamp:            0x6198109D
  Symbol Table Pointer:  0x0
  Symbols:               0
  OpionalHeader Size:    224 (0xE0)
@@ -39,32 +39,31 @@ PE header information
 Optional Header
 Magic:      10B (PE) 
 MajorLinkerVersion:      0xE
-MinorLinkerVersion:      0x14
-SizeOfCode:              0x546000
-SizeOfInitializedData:   0x150E00
+MinorLinkerVersion:      0x1D
+SizeOfCode:              0x36E00
+SizeOfInitializedData:   0x1C200
 SizeOfUninitializedData: 0x0
-EntryPoint:              0x285440
+EntryPoint:              0x1B1CC
 BaseOfCode:              0x1000
-BaseOfData:              0x547000
-ImageBase:               0x10000000
+BaseOfData:              0x38000
+ImageBase:               0x3f000000
 SectionAlignment:        0x1000
 FileAlignment:           0x200
-MajorOSVersion:          0xA
+MajorOSVersion:          0x6
 MinorOSVersion:          0x0
-MajorImageVersion:       0xA
+MajorImageVersion:       0x0
 MinorImageVersion:       0x0
-MajorSubsysVersion:      0xA
+MajorSubsysVersion:      0x6
 MinorSubsysVersion:      0x0
 Win32VersionValue:       0x0
-SizeOfImage:             0x69C000
+SizeOfImage:             0x9A000
 SizeOfHeaders:           0x400
-CheckSum:                0x5921CF
-Subsystem:               (3)   IMAGE_SUBSYSTEM_WINDOWS_CUI
+CheckSum:                0x61CF1
+Subsystem:               (2)   IMAGE_SUBSYSTEM_WINDOWS_GUI
 DllCharacteristics:           
      IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE
      IMAGE_DLLCHARACTERISTICS_NX_COMPAT
-     IMAGE_DLLCHARACTERISTICS_GUARD_CF
-SizeOfStackReserve:      0x40000
+SizeOfStackReserve:      0x100000
 SizeOfStackCommit:       0x1000
 SizeOfHeapReserve:       0x100000
 SizeOfHeapCommit:        0x1000
@@ -73,38 +72,38 @@ NumberOfRvaAndSizes:     16
 
 Data Tables: 
   Export Table: 
-     Address: 0x545BA0  Offset: 544FA0
-        Size: 0x145E 
+     Address: 0x438F0   Offset: 42AF0
+        Size: 0x4DB4 
   Import Table: 
-     Address: 0x65F6C8  Offset: 5558C8
-        Size: 0x3D4 
+     Address: 0x486A4   Offset: 478A4
+        Size: 0x78 
   Resource Table: 
-     Address: 0x665000  Offset: 558C00
-        Size: 0x3E8 
+     Address: 0x96000   Offset: 4F800
+        Size: 0xC8C 
+  Certificate : 
+     Address: 0x53400   Offset: FFFFFFFF
+        Size: 0x23A8 
   Base Relocation: 
-     Address: 0x666000  Offset: 559000
-        Size: 0x35AB4 
+     Address: 0x97000   Offset: 50600
+        Size: 0x2C34 
   Debug Table: 
-     Address: 0xB16F0   Offset: B0AF0
+     Address: 0x41C70   Offset: 40E70
         Size: 0x54 
   TLS Table: 
-     Address: 0x18CB0   Offset: 180B0
+     Address: 0x41DC0   Offset: 40FC0
         Size: 0x18 
   Load Config : 
-     Address: 0x17D50   Offset: 17150
-        Size: 0xAC 
+     Address: 0x41CC8   Offset: 40EC8
+        Size: 0x40 
   Import Address: 
-     Address: 0x65F000  Offset: 555200
-        Size: 0x6C4 
-  Delay Import Desc.: 
-     Address: 0x545864  Offset: 544C64
-        Size: 0xC0 
+     Address: 0x38000   Offset: 37200
+        Size: 0x30C 
 
 Sections: 
    Name: .text
        VirtualAddress:        1000
-       VirtualSize:           545FFE
-       SizeOfRawData:         546000
+       VirtualSize:           36DEA
+       SizeOfRawData:         36E00
        PointerToRawData:      400
        PointerToRelactons:    0
        PointerToLinenumbers:  0
@@ -114,11 +113,23 @@ Sections:
           IMAGE_SCN_CNT_CODE
           IMAGE_SCN_MEM_EXECUTE
           IMAGE_SCN_MEM_READ
+   Name: .rdata
+       VirtualAddress:        38000
+       VirtualSize:           11830
+       SizeOfRawData:         11A00
+       PointerToRawData:      37200
+       PointerToRelactons:    0
+       PointerToLinenumbers:  0
+       NumberOfRelocations:   0
+       NumberOfLinenumbers:   0
+       Characteristics:       40000040
+          IMAGE_SCN_CNT_INITIALIZED_DATA
+          IMAGE_SCN_MEM_READ
    Name: .data
-       VirtualAddress:        547000
-       VirtualSize:           117338
-       SizeOfRawData:         EE00
-       PointerToRawData:      546400
+       VirtualAddress:        4A000
+       VirtualSize:           4B414
+       SizeOfRawData:         6C00
+       PointerToRawData:      48C00
        PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
@@ -127,48 +138,11 @@ Sections:
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
           IMAGE_SCN_MEM_WRITE
-   Name: .idata
-       VirtualAddress:        65F000
-       VirtualSize:           3422
-       SizeOfRawData:         3600
-       PointerToRawData:      555200
-       PointerToRelactons:    0
-       PointerToLinenumbers:  0
-       NumberOfRelocations:   0
-       NumberOfLinenumbers:   0
-       Characteristics:       40000040
-          IMAGE_SCN_CNT_INITIALIZED_DATA
-          IMAGE_SCN_MEM_READ
-   Name: .didat
-       VirtualAddress:        663000
-       VirtualSize:           A8
-       SizeOfRawData:         200
-       PointerToRawData:      558800
-       PointerToRelactons:    0
-       PointerToLinenumbers:  0
-       NumberOfRelocations:   0
-       NumberOfLinenumbers:   0
-       Characteristics:       C0000040
-          IMAGE_SCN_CNT_INITIALIZED_DATA
-          IMAGE_SCN_MEM_READ
-          IMAGE_SCN_MEM_WRITE
-   Name: .mrdata
-       VirtualAddress:        664000
-       VirtualSize:           1
-       SizeOfRawData:         200
-       PointerToRawData:      558A00
-       PointerToRelactons:    0
-       PointerToLinenumbers:  0
-       NumberOfRelocations:   0
-       NumberOfLinenumbers:   0
-       Characteristics:       40000040
-          IMAGE_SCN_CNT_INITIALIZED_DATA
-          IMAGE_SCN_MEM_READ
    Name: .rsrc
-       VirtualAddress:        665000
-       VirtualSize:           3E8
-       SizeOfRawData:         400
-       PointerToRawData:      558C00
+       VirtualAddress:        96000
+       VirtualSize:           C8C
+       SizeOfRawData:         E00
+       PointerToRawData:      4F800
        PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
@@ -177,10 +151,10 @@ Sections:
           IMAGE_SCN_CNT_INITIALIZED_DATA
           IMAGE_SCN_MEM_READ
    Name: .reloc
-       VirtualAddress:        666000
-       VirtualSize:           35AB4
-       SizeOfRawData:         35C00
-       PointerToRawData:      559000
+       VirtualAddress:        97000
+       VirtualSize:           2C34
+       SizeOfRawData:         2E00
+       PointerToRawData:      50600
        PointerToRelactons:    0
        PointerToLinenumbers:  0
        NumberOfRelocations:   0
@@ -192,17 +166,85 @@ Sections:
 
 Export Directory 
     Flags:           0x0
-    TimeStamp:       0x90AA65D2
+    TimeStamp:       0xFFFFFFFF
     MajorVersion:    0x0
     MinorVersion:    0x0
-    Name RVA:        0x546208
-    OrdinalBase:     0x190
-    AddressTable Entries:  0xA0
-    NumberOfNames:         0xA0
-    ExportTable Entries:   0x545BC8
-    AddressOfNames:        0x545E48
-    OrdinalTable RVA:      0x5460C8
+    Name RVA:        0x44D22
+    OrdinalBase:     0x1
+    AddressTable Entries:  0x201
+    NumberOfNames:         0x201
+    ExportTable Entries:   0x43918
+    AddressOfNames:        0x4411C
+    OrdinalTable RVA:      0x44920
 
+Exported functions: 
+       ??0CStack@@QAE@XZ
+       ??0CThread@@QAE@XZ
+       ??0CThreadEvent@@QAE@PAX_N@Z
+       ??0CThreadEvent@@QAE@PBD_N1@Z
+
+................. shortened for briefness ..................
+
+       ?AssertUseable@CThreadSyncObject@@IAEXXZ
+       ?AtRoot@CVProfile@@QBE_NXZ
+       ?BCountingOnly@CValidator@@QAE_NXZ
+       ?BExcludeAllocationFromTracking@CValidator@@AAE_NPBDH@Z
+       ?BHasValidThreadID@CThread@@QBE_NXZ
+       ?BIsProfilePtrValid@CVProfManager@@QAE_NPAVCVProfile@@@Z
+       ?BLockForReadNoWait@CThreadRWLock@@QAE_NXZ
+       ?BMemLeaks@CValidator@@QAE_NXZ
+       ?BProfileHasNodesOutsideBudgetGroup_Recursive@CVProfile@@IAE_NPAVCVProfNode@@H@Z
+       ?BoostPriority@CWorkerThread@@QAEHXZ
+       ?BudgetGroupNameToBudgetGroupID@CVProfile@@QBE?AW4EVProfBugdetGroup@@PBD@Z
+       ?CalcStackDepth@CThread@@QAEIPAX@Z
+       ?CalculateCRC@CStack@@QAEXXZ
+       AllocateCrashMemoryReserve
+       AreStackTrackingFiltersEnabledAtStart
+       AssertMsgImplementation
+       AssertMsgImplementationF
+       AssertMsgImplementationV
+       BBlockingGetMiniDumpLock
+       BGetLocalFQDN
+       BGetMiniDumpLock
+       BWritingFatalMiniDump
+       BWritingMiniDump
+       BWritingNonFatalMiniDump
+       CVProfile_ExitScope
+       CallAssertFailedNotifyFunc
+       CallFlushLogFunc
+       CatchAndWriteMiniDump
+       CatchAndWriteMiniDumpEx
+       CatchAndWriteMiniDumpExForVoidPtrFn
+       CatchAndWriteMiniDumpExReturnsInt
+       CatchAndWriteMiniDumpForVoidPtrFn
+       ClearStackTrackingFilters
+       ClearWritingMiniDump
+       CopyFileUTF8
+       CrackSmokingCompiler
+       CreateDirectoryUTF8
+       CreateFileUTF8
+       CreateProcessUTF8
+       CreateSimpleProcess
+       DLog
+       DWarning
+       DeclareCurrentThreadIsMainThread
+       DeleteFileUTF8
+       DoNewAssertDialog
+       ETWBegin
+       ETWEnd
+       ETWIsTracingEnabled
+       ETWMark
+       ETWMark1I
+       ETWMark1S
+       ETWMark2I
+       ETWMark2S
+       ETWMark3I
+       ETWMarkPrintf
+       ETWOverlayFrameMark
+       ETWRenderFrameMark
+       ETW_Steamworks_DispatchCallback_End_
+       ETW_Steamworks_DispatchCallback_Start
+...
 ```
 
 ## Bugs / Improvments
@@ -210,6 +252,7 @@ Export Directory
   - issue was due to how the functions read32_le(), read64_le()...etc were designed, they compiled fine under gcc, but due to opposite order of operations under visual studio compiler, the functions read/wrote data backwards, causing invalid reads of PE header and breaking fseek().
 - [x] Visual Studio refuses to compile for a char array of size 0
   - instead of the convulted way written in read_str() function to read a number of bytes as a string, I've updated the function to read one byte at a time and save into an allocated memory.
+- [ ] Program needs to handle unusual PE exetaubles if they contain exports, or DLLs without exports.
 
 
 ## To-do list / Progress
@@ -224,6 +267,7 @@ Export Directory
     - [x] Added separate function that cleans up allocated memory.
 - [x] Add code to read DOS header.
 - [x] Read and print PE sections (name, size, permissions).
+- [x] Added the ability to read and print DLL exported functions.
 - [ ] Implement functions to output parse-able text (for example, csv).
 - [x] Read basic DataDirectory info.
 - [ ] Read imported functions (by name).

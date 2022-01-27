@@ -2,9 +2,6 @@
 
 #include "headers.h"
 
-//
-
-
 // read_str(): reads a 'count' of characters from a file
 // arguments: FILE stream to read from, count of characters to read
 // returns: pointer to a string of characters.
@@ -69,7 +66,9 @@ uint64_t  read64_le(FILE *in)
   return value;
 }
 
-
+// print_sections(): prints PE sections info
+// arguments: a pointer to dosheader object
+// return: none
 void print_sections(dos_header_t *dosHeader)
 {
   section_table_t *sections;
@@ -92,7 +91,10 @@ void print_sections(dos_header_t *dosHeader)
   }
 }
 
-
+// load_file(): loads and reads PE files in current directory
+// arguments: integer represneting argument count, and a pointer 
+// to an argument array containing at least 1 valid argument.
+// return: none
 void load_file(int argc, char *argv[])
 {
   dos_header_t dosHeader;
@@ -101,7 +103,7 @@ void load_file(int argc, char *argv[])
   for(int idx = 1; idx < argc; idx++)
   {
     in = fopen(argv[idx], "rb");
-    if(in == NULL)
+    if( in == NULL )
     {
       printf("Can't open '%s' file, exiting\n", argv[idx]);
       continue;
@@ -114,6 +116,7 @@ void load_file(int argc, char *argv[])
     read_sections(in, &dosHeader);
     read_dataOffset(&dosHeader);
     read_exportDir(in, &dosHeader);
+    read_importDir(in, &dosHeader);
     
 
     // test printing information
@@ -128,8 +131,12 @@ void load_file(int argc, char *argv[])
     cleanup(&dosHeader);
     fclose(in);
   }
+  
 }
 
+// print_headers(): prints the values of a DOS header object
+// arguments: a pointer to a dosheader object
+// return: none
 void print_headers(dos_header_t *dosHeader)
 {
 
@@ -162,7 +169,7 @@ void print_headers(dos_header_t *dosHeader)
   printf("SizeOfUninitializedData: 0x%X\n", dosHeader->pe.optionalHeader.sizeOfUninitializedData);
   printf("EntryPoint:              0x%X\n", dosHeader->pe.optionalHeader.entryPoint);
   printf("BaseOfCode:              0x%X\n", dosHeader->pe.optionalHeader.baseOfCode);
-  if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32){
+  if( dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32 ){
     printf("BaseOfData:              0x%X\n", dosHeader->pe.optionalHeader.baseOfData);
   }
   printf("ImageBase:               %p\n", (void*) dosHeader->pe.optionalHeader.imageBase);
@@ -193,6 +200,9 @@ void print_headers(dos_header_t *dosHeader)
 
 }
 
+// print_dataTables(): prints a list of data tables in a PE file
+// arguments: a pointer to a dosheader object
+// return: none
 void print_dataTables(dos_header_t *dosHeader)
 {
   // Data Directories Types
@@ -222,7 +232,7 @@ void print_dataTables(dos_header_t *dosHeader)
   for(int idx = 0; idx < tables; idx++)
   {
       vAddress = dosHeader->dataDirectory[idx].virtualAddr;
-      if(vAddress == 0) continue;
+      if( vAddress == 0 ) continue;
       printf("  %s: \n", dataTable[idx]);
       offset = rva_to_offset(sections, vAddress, dosHeader->section_table);
       printf("     Address: 0x%X \tOffset: %X\n", vAddress, offset);
@@ -230,7 +240,9 @@ void print_dataTables(dos_header_t *dosHeader)
   }
 }
 
-
+// print_exports(): prints a list of exports in a PE file
+// arguments: a pointer to a dosheader object
+// return: none
 void print_exports(dos_header_t *dosHeader)
 {
   printf("\nExport Directory \n");
@@ -239,10 +251,19 @@ void print_exports(dos_header_t *dosHeader)
   printf("    MajorVersion:    0x%X\n", dosHeader->exportDir.majorVer);
   printf("    MinorVersion:    0x%X\n", dosHeader->exportDir.minorVer);
   printf("    Name RVA:        0x%X\n", dosHeader->exportDir.nameRVA);
-  printf("    OrdinalBase:     0x%X\n", dosHeader->exportDir.ordBase);
+  printf("    OrdinalBase:     0x%X\n", dosHeader->exportDir.ordinalBase);
   printf("    AddressTable Entries:  0x%X\n", dosHeader->exportDir.addrTableEntries);
   printf("    NumberOfNames:         0x%X\n", dosHeader->exportDir.numberOfNamePointers);
   printf("    ExportTable Entries:   0x%X\n", dosHeader->exportDir.exportAddrTableRVA);
   printf("    AddressOfNames:        0x%X\n", dosHeader->exportDir.namePtrRVA);
-  printf("    OrdinalTable RVA:      0x%X\n", dosHeader->exportDir.ordTableRVA);
+  printf("    OrdinalTable RVA:      0x%X\n", dosHeader->exportDir.ordinalTableRVA);
+
+  printf("\nExported functions: \n");
+  
+  // if characteristics flag isn't IMAGE_FILE_DLL
+  if( (dosHeader->pe.characteristics & 0x2000) == 0 ) return;
+  for(int i = 0; i < dosHeader->exportDir.numberOfNamePointers; i++){
+    printf("       %s\n", dosHeader->exportDir.exportAddr_name_t[i].names);
+  }
+  
 }

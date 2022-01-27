@@ -92,6 +92,7 @@ void cleanup(dos_header_t *dosHeader)
   {
     free(dosHeader->section_table[i].name);
   }
+  free(dosHeader->exportDir.exportAddr_name_t);
   free(dosHeader->section_table);
 }
 
@@ -108,7 +109,7 @@ uint64_t rva_to_offset(int numberOfSections, uint64_t rva,
   {
     sumAddr = sections[idx].virtualAddr + sections[idx].sizeOfRawData;
     
-    if ( rva >= sections[idx].virtualAddr && (rva <= sumAddr) )
+    if( rva >= sections[idx].virtualAddr && (rva <= sumAddr) )
     {
       return  sections[idx].ptrToRawData + (rva - sections[idx].virtualAddr);
     }
@@ -135,8 +136,8 @@ void print_dllcharacteristics(uint16_t ch)
 {
   for(int idx = 0; idx < 11; idx++)
   {
-    if(ch & (image_dll_arr[idx]))
-     printf("     %s\n", image_dll_str[idx]);
+    if( ch & (image_dll_arr[idx]) )
+      printf("     %s\n", image_dll_str[idx]);
   }
 }
 
@@ -278,7 +279,7 @@ void print_subsystem(uint16_t system){
 void print_section_characteristics(uint32_t ch){
   for(int i = 0; i < 35; i++)
   {
-    if(ch & (section_flags_arr[i]))
+    if( ch & (section_flags_arr[i]) )
     {
       printf("          %s\n", section_flags_str[i]);
     }
@@ -325,7 +326,7 @@ void read_dos(FILE *in, dos_header_t *dosHeader)
 void read_pe(FILE *in, dos_header_t *dosHeader)
 {
 
-  if( fseek(in, dosHeader->e_lfanew, SEEK_SET) == -1)
+  if( fseek(in, dosHeader->e_lfanew, SEEK_SET) == -1 )
   {  
     printf("Error during file reading.\n");
     exit(-1);
@@ -352,7 +353,7 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
   dosHeader->pe.optionalHeader.baseOfCode = read32_le(in);
 
   // Optional Header Windows-Specific Fields 
-  if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
+  if( dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus )
   {
     dosHeader->pe.optionalHeader.imageBase        = read64_le(in);
   } else {
@@ -375,7 +376,7 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
   dosHeader->pe.optionalHeader.subsystem         = read16_le(in);
   dosHeader->pe.optionalHeader.dllCharacteristics= read16_le(in);
   
-  if(dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus)
+  if( dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus )
   {
     dosHeader->pe.optionalHeader.sizeOfStackReserve= read64_le(in);
     dosHeader->pe.optionalHeader.sizeOfStackCommit = read64_le(in);
@@ -456,9 +457,9 @@ void read_exportDir(FILE *in, dos_header_t *dosHeader)
   
   offset = dosHeader->dataDirectory[0].offset;
   
-  if(offset < 0 ) return;
+  if( offset < 0 ) return;
 
-  if( fseek(in, offset, SEEK_SET) == -1)
+  if( fseek(in, offset, SEEK_SET) == -1 )
   {
     printf("fseek failed in read exports.\n");
     return;
@@ -469,15 +470,52 @@ void read_exportDir(FILE *in, dos_header_t *dosHeader)
   dosHeader->exportDir.majorVer     = read16_le(in);
   dosHeader->exportDir.minorVer     = read16_le(in);
   dosHeader->exportDir.nameRVA      = read32_le(in);
-  dosHeader->exportDir.ordBase      = read32_le(in);
+  dosHeader->exportDir.ordinalBase          = read32_le(in);
   dosHeader->exportDir.addrTableEntries     = read32_le(in);
   dosHeader->exportDir.numberOfNamePointers = read32_le(in);
   dosHeader->exportDir.exportAddrTableRVA   = read32_le(in);
   dosHeader->exportDir.namePtrRVA           = read32_le(in);
-  dosHeader->exportDir.ordTableRVA          = read32_le(in);
+  dosHeader->exportDir.ordinalTableRVA      = read32_le(in);
+
+  read_exportNames(in, dosHeader);
 }
 
 
+// read_exportNames(): reads the ascii names of exported functions
+// arguments: a pointer to a FILE stream, and a DOS header structure
+// return: none
+void read_exportNames(FILE *in, dos_header_t *dosHeader)
+{
+  uint32_t tableOffset;
+  uint32_t nameOffset;
+  uint32_t nameRVA;
+  uint32_t tableSize;
+  char buffer[100];
+
+  tableSize = dosHeader->exportDir.numberOfNamePointers;
+  tableOffset = rva_to_offset(dosHeader->pe.numberOfSections,
+          dosHeader->exportDir.namePtrRVA, dosHeader->section_table);
+  dosHeader->exportDir.exportAddr_name_t = malloc(sizeof(export_address_name_t)* tableSize);
+
+  for(uint32_t idx = 0; idx < tableSize; idx++)
+  { 
+    fseek(in, tableOffset, 0);
+    nameRVA = read32_le(in);
+    nameOffset = rva_to_offset(dosHeader->pe.numberOfSections,
+          nameRVA, dosHeader->section_table);
+    fseek(in, nameOffset, 0);
+    fgets(buffer, 100, in);
+    //printf("Got export: %s\n", buffer);
+    strcat(dosHeader->exportDir.exportAddr_name_t[idx].names, buffer);
+    tableOffset += 4;
+  }
+}
+
+
+void read_importDir(FILE *in, dos_header_t *dosHeader)
+{
+
+}
 
 /*  PE specific functions
   After having read the entire PE file, the functions here can be used
