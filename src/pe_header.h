@@ -13,11 +13,11 @@
 
 // Import Table
 typedef struct import_directory_t{
-  uint32_t origFirstThunk;
-  uint32_t timeStamp;
-  uint32_t forwarderChain;
-  uint32_t name;
-  uint32_t firstThunk;
+  uint32_t importLookupTableRVA;// RVA of the import lookup table 
+  uint32_t timeStamp;       
+  uint32_t forwarderChain; 
+  uint32_t nameRVA;             // address of an ASCII string name of the DLL
+  uint32_t importAddressRVA;
 }import_directory_t;
 
 // export address table
@@ -145,7 +145,7 @@ typedef struct dos_header_t{
   section_table_t    *section_table;
   data_directory_t   *dataDirectory;
   export_directory_t  exportDir;
-  // import directory
+  import_directory_t  *importDir;
   // resources directory
   // base relocation table
   // debug table
@@ -155,7 +155,7 @@ typedef struct dos_header_t{
   // delay import descriptor
 }dos_header_t;
 
-// convert an RVA to a file offset
+// misc functions to help with the general parsing operations
 uint64_t rva_to_offset(int numberOfSections, uint64_t rva, 
                            section_table_t *sections);
 
@@ -167,6 +167,7 @@ void      print_subsystem(uint16_t system);
 void      print_dllcharacteristics(uint16_t ch);
 void      print_section_characteristics(uint32_t ch);
 void      print_exports(dos_header_t *dosHeader);
+void      print_imports(dos_header_t *dosHeader);
 
 // functions to read header section from file
 void      read_dos(FILE *in, dos_header_t *dosHeader);

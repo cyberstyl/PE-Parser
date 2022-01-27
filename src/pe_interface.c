@@ -514,6 +514,23 @@ void read_exportNames(FILE *in, dos_header_t *dosHeader)
 
 void read_importDir(FILE *in, dos_header_t *dosHeader)
 {
+  uint32_t tableEntries;
+
+  // each import entry has 5 fields, 4 bytes per field (20 bytes per entry)
+  // minus 1 because the final table will be empty signaling the end of entries
+  tableEntries = (dosHeader->dataDirectory[1].size / 20) - 1 ;
+  fseek(in, dosHeader->dataDirectory[1].offset, 0);
+
+  dosHeader->importDir = malloc(sizeof(import_directory_t) * tableEntries);
+
+  for(uint32_t idx = 0; idx < tableEntries; idx++)
+  {
+    dosHeader->importDir[idx].importLookupTableRVA = read32_le(in);
+    dosHeader->importDir[idx].timeStamp        = read32_le(in);
+    dosHeader->importDir[idx].forwarderChain   = read32_le(in);
+    dosHeader->importDir[idx].nameRVA          = read32_le(in);
+    dosHeader->importDir[idx].importAddressRVA = read32_le(in);
+  }
 
 }
 

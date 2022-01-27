@@ -126,6 +126,7 @@ void load_file(int argc, char *argv[])
     print_dataTables(&dosHeader);
     print_sections(&dosHeader);
     print_exports(&dosHeader);
+    print_imports(&dosHeader);
 
     // cleanup
     cleanup(&dosHeader);
@@ -263,7 +264,28 @@ void print_exports(dos_header_t *dosHeader)
   // if characteristics flag isn't IMAGE_FILE_DLL
   if( (dosHeader->pe.characteristics & 0x2000) == 0 ) return;
   for(int i = 0; i < dosHeader->exportDir.numberOfNamePointers; i++){
-    printf("       %s\n", dosHeader->exportDir.exportAddr_name_t[i].names);
+    printf("   %s\n", dosHeader->exportDir.exportAddr_name_t[i].names);
   }
   
+}
+
+// print_exports(): prints a list of exports in a PE file
+// arguments: a pointer to a dosheader object
+// return: none
+void print_imports(dos_header_t *dosHeader)
+{
+  uint32_t tableEntries;
+
+  tableEntries = (dosHeader->dataDirectory[1].size / 20) - 1 ;
+  printf("\nExport Directory \n");
+
+  for(uint32_t idx = 0; idx < tableEntries; idx++)
+  {
+    printf("  Import Lookup table RVA: %x\n", dosHeader->importDir[idx].importLookupTableRVA);
+    printf("  Time Stamp:              %x\n", dosHeader->importDir[idx].timeStamp);
+    printf("  Forwarder Chain:         %x\n", dosHeader->importDir[idx].forwarderChain);
+    printf("  Name RVA:                %x\n", dosHeader->importDir[idx].nameRVA);
+    printf("  Import Address table RVA: %x\n\n", dosHeader->importDir[idx].importAddressRVA);
+  }
+
 }
