@@ -2,7 +2,6 @@
 //    implements functions that deals with PE structures
 //    read PE and save information in a struct
 //
-// #include "pe_header.h"
 
 #include "headers.h"
 
@@ -106,7 +105,7 @@ uint64_t rva_to_offset(int numberOfSections, uint64_t rva,
   if(rva == 0) return 0;
   uint64_t sumAddr;
 
-  for (int idx = 0; idx < numberOfSections; idx++) 
+  for(int idx = 0; idx < numberOfSections; idx++) 
   {
     sumAddr = sections[idx].virtualAddr + sections[idx].sizeOfRawData;
     
@@ -125,7 +124,7 @@ void print_pe_characteristics(uint16_t ch)
 {
   for(int idx = 0; idx < 15; idx++)
   {
-    if(ch & (image_file_arr[idx]))
+    if( ch & (image_file_arr[idx]) )
      printf("     %s\n", image_file_str[idx]);
   }
 }
@@ -352,8 +351,6 @@ void read_pe(FILE *in, dos_header_t *dosHeader)
   dosHeader->pe.optionalHeader.sizeOfUninitializedData  = read32_le(in);
   dosHeader->pe.optionalHeader.entryPoint = read32_le(in);
   dosHeader->pe.optionalHeader.baseOfCode = read32_le(in);
-
-  // Optional Header Windows-Specific Fields 
   if( dosHeader->pe.optionalHeader.magic == OPTIONAL_IMAGE_PE32_plus )
   {
     dosHeader->pe.optionalHeader.imageBase        = read64_le(in);
@@ -495,9 +492,13 @@ void read_exportNames(FILE *in, dos_header_t *dosHeader)
 
   tableSize = dosHeader->exportDir.numberOfNamePointers;
   tableOffset = rva_to_offset(dosHeader->pe.numberOfSections,
-          dosHeader->exportDir.namePtrRVA, dosHeader->section_table);
-  dosHeader->exportDir.exportAddr_name_t = malloc(sizeof(export_address_name_t)* tableSize);
+                             dosHeader->exportDir.namePtrRVA, 
+                             dosHeader->section_table);
+  dosHeader->exportDir.exportAddr_name_t = malloc(
+                                    sizeof(export_address_name_t) * tableSize);
 
+
+  // reading Import table entries (per DLL)
   for(uint32_t idx = 0; idx < tableSize; idx++)
   { 
     fseek(in, tableOffset, 0);
@@ -508,7 +509,8 @@ void read_exportNames(FILE *in, dos_header_t *dosHeader)
     fgets(buffer, 100, in);
     //printf("Got export: %s\n", buffer);
     strcat(dosHeader->exportDir.exportAddr_name_t[idx].names, buffer);
-    tableOffset += 4;
+
+    tableOffset += 4; // after reading 4 bytes, jump to next 4 bytes
   }
 }
 

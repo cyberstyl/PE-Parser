@@ -1,4 +1,7 @@
-
+// misc.c:
+//    misc functions used in most of the code that are not 
+//    specific to PE parsing, but can be used anywhere else.
+//
 
 #include "headers.h"
 
@@ -132,7 +135,6 @@ void load_file(int argc, char *argv[])
     cleanup(&dosHeader);
     fclose(in);
   }
-  
 }
 
 // print_headers(): prints the values of a DOS header object
@@ -141,12 +143,14 @@ void load_file(int argc, char *argv[])
 void print_headers(dos_header_t *dosHeader)
 {
 
-  printf("Magic bytes: \t\t%c%c\n", (0xff & dosHeader->magic), ( dosHeader->magic>>8) );
+  printf("Magic bytes: \t\t%c%c\n", (0xff & dosHeader->magic), 
+                                    (dosHeader->magic>>8) );
   printf("PE Offset    \t\t%X\n", dosHeader->e_lfanew);
 
   printf("\nPE header information\n");
   printf(" Signature:   \t\t0x%X (%c%c) \n",  dosHeader->pe.signature, 
-               (0xff & dosHeader->pe.signature), 0xff & (dosHeader->pe.signature>>8) );
+                                     (0xff & dosHeader->pe.signature), 
+                                     0xff & (dosHeader->pe.signature>>8) );
 
   printf(" Machine:  \t\t");
   print_machine(dosHeader->pe.machine);
@@ -156,7 +160,7 @@ void print_headers(dos_header_t *dosHeader)
   printf(" Symbol Table Pointer:  0x%X\n", dosHeader->pe.symTablePtr);
   printf(" Symbols:               %d\n", dosHeader->pe.numberOfSym);
   printf(" OpionalHeader Size:    %d (0x%X)\n", dosHeader->pe.optionalHeaderSize, 
-                          dosHeader->pe.optionalHeaderSize);
+                                                dosHeader->pe.optionalHeaderSize);
   printf(" Characteristics:       0x%X\n", dosHeader->pe.characteristics);
   print_pe_characteristics(dosHeader->pe.characteristics);
   
@@ -207,22 +211,14 @@ void print_headers(dos_header_t *dosHeader)
 void print_dataTables(dos_header_t *dosHeader)
 {
   // Data Directories Types
-  char dataTable[][25] = { "Export Table",
-                      "Import Table",
-                      "Resource Table",
-                      "Exception Table",
-                      "Certificate ",
-                      "Base Relocation",
-                      "Debug Table",
-                      "Architecture",
-                      "Global Ptr Table",
-                      "TLS Table",
-                      "Load Config ",
-                      "Bound Import",
-                      "Import Address",
-                      "Delay Import Desc.",
-                      "CLR Runtime Header",
-                      "Reserved, must be zero"};
+  char dataTable[][25] = { "Export Table",       "Import Table",
+                         "Resource Table",    "Exception Table",
+                           "Certificate ",    "Base Relocation",
+                            "Debug Table",       "Architecture",
+                       "Global Ptr Table",          "TLS Table",
+                           "Load Config ",       "Bound Import",
+                         "Import Address", "Delay Import Desc.",
+                     "CLR Runtime Header", "Reserved, must be zero"};
 
   uint32_t offset, vAddress, sections, tables;
   sections = dosHeader->pe.numberOfSections;
@@ -233,9 +229,14 @@ void print_dataTables(dos_header_t *dosHeader)
   for(int idx = 0; idx < tables; idx++)
   {
       vAddress = dosHeader->dataDirectory[idx].virtualAddr;
+
+      // skipping empty directories
       if( vAddress == 0 ) continue;
+
       printf("  %s: \n", dataTable[idx]);
+
       offset = rva_to_offset(sections, vAddress, dosHeader->section_table);
+
       printf("     Address: 0x%X \tOffset: %X\n", vAddress, offset);
       printf("        Size: 0x%X \n", dosHeader->dataDirectory[idx].size);
   }
@@ -261,8 +262,9 @@ void print_exports(dos_header_t *dosHeader)
 
   printf("\nExported functions: \n");
   
-  // if characteristics flag isn't IMAGE_FILE_DLL
+  // skipping none IMAGE_FILE_DLL
   if( (dosHeader->pe.characteristics & 0x2000) == 0 ) return;
+  
   for(int i = 0; i < dosHeader->exportDir.numberOfNamePointers; i++){
     printf("   %s\n", dosHeader->exportDir.exportAddr_name_t[i].names);
   }

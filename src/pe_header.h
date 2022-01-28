@@ -146,17 +146,17 @@ typedef struct dos_header_t{
   data_directory_t   *dataDirectory;
   export_directory_t  exportDir;
   import_directory_t  *importDir;
-  // resources directory
-  // base relocation table
-  // debug table
-  // tls table
-  // load config table
-  // iat table
-  // delay import descriptor
+  // to be implemented later:
+  //    resources directory
+  //    base relocation table
+  //    debug table
+  //    tls table
+  //    load config table
+  //    delay import descriptor
 }dos_header_t;
 
 // misc functions to help with the general parsing operations
-uint64_t rva_to_offset(int numberOfSections, uint64_t rva, 
+uint64_t  rva_to_offset(int numberOfSections, uint64_t rva, 
                            section_table_t *sections);
 
 // functions to output PE info
@@ -169,7 +169,7 @@ void      print_section_characteristics(uint32_t ch);
 void      print_exports(dos_header_t *dosHeader);
 void      print_imports(dos_header_t *dosHeader);
 
-// functions to read header section from file
+// functions to parse section from PE file
 void      read_dos(FILE *in, dos_header_t *dosHeader);
 void      read_pe(FILE *in, dos_header_t *dosHeader);
 void      read_dataDir(FILE *in, dos_header_t *dosHeader);
@@ -194,11 +194,9 @@ void      cleanup(dos_header_t *dosHeader);
 #define IMAGE_FILE_MACHINE_ARMNT   	0x1c4   // ARM Thumb-2 little endian
 #define IMAGE_FILE_MACHINE_EBC   		0xebc   // EFI byte code
 
-
 // PE optional image
 #define OPTIONAL_IMAGE_PE32      0x10b
 #define OPTIONAL_IMAGE_PE32_plus 0x20b
-
 
 // Image subsystem
 #define IMAGE_SUBSYSTEM_UNKNOWN   		  	0   		//  An unknown subsystem
@@ -215,6 +213,5 @@ void      cleanup(dos_header_t *dosHeader);
 #define IMAGE_SUBSYSTEM_EFI_ROM     		13      	    	//	An EFI ROM image
 #define IMAGE_SUBSYSTEM_XBOX     			  14              //  XBOX
 #define IMAGE_SUBSYSTEM_WINDOWS_BOOT_APPLICATION    16  //  Windows boot application. 
-
 
 #endif
