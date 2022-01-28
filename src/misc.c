@@ -115,6 +115,15 @@ void load_file(int argc, char *argv[])
     // read headers
     read_dos(in, &dosHeader);    
     read_pe(in, &dosHeader);
+
+    // making sure we have a valid/standard PE file
+    if( dosHeader.pe.signature != 0x4550 )
+    {
+        printf("invalid PE signature, file is likely corrupt PE, or not a valid PE file.\n");
+        fclose(in);
+        return;
+    }
+
     read_dataDir(in, &dosHeader);
     read_sections(in, &dosHeader);
     read_dataOffset(&dosHeader);
@@ -264,7 +273,7 @@ void print_exports(dos_header_t *dosHeader)
   
   // skipping none IMAGE_FILE_DLL
   if( (dosHeader->pe.characteristics & 0x2000) == 0 ) return;
-  
+
   for(int i = 0; i < dosHeader->exportDir.numberOfNamePointers; i++){
     printf("   %s\n", dosHeader->exportDir.exportAddr_name_t[i].names);
   }
