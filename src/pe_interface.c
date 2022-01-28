@@ -94,6 +94,7 @@ void cleanup(dos_header_t *dosHeader)
   }
   free(dosHeader->exportDir.exportAddr_name_t);
   free(dosHeader->section_table);
+  free(dosHeader->importDir);
 }
 
 // rva_to_offset(): converts an RVA address to a file offset.
@@ -512,6 +513,9 @@ void read_exportNames(FILE *in, dos_header_t *dosHeader)
 }
 
 
+// read_importDir(): reads the imports table entries
+// arguments: a pointer to a FILE stream, and a DOS header structure
+// return: none
 void read_importDir(FILE *in, dos_header_t *dosHeader)
 {
   uint32_t tableEntries;
