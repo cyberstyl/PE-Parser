@@ -1,7 +1,7 @@
 # PErser (PE Parser)
 
 ## Introduction
-PErser (as in PE Parser) is PErser is a parser for the PE (Portable Executable) format of executable files and dynamic libraries under Windows. It is able to parse DLL or EXE files, extract and produce information about the file, such as its version, entries found in its import table or resources. 
+PErser (as in PE Parser) is a parser for the PE (Portable Executable) format of executable files and dynamic libraries under Windows. It is able to parse DLL or EXE files, extract and produce information about the file, such as its version, entries found in its import table or resources. 
 
 Some of the files that use PE headers includes:
 .acm, .ax, .cpl, .dll, .drv, .efi, .exe, .mui, .ocx, .scr, .sys, .tsp
