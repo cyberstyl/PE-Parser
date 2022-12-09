@@ -1,7 +1,7 @@
-# PErser (PE Parser)
+PE Parser
 
 ## Introduction
-PErser (as in PE Parser) is a parser for the PE (Portable Executable) format of executable files and dynamic libraries under Windows. It is able to parse DLL or EXE files, extract and produce information about the file, such as its version, entries found in its import table or resources. 
+A parser for the PE (Portable Executable) format of executable files and dynamic libraries under Windows. It is able to parse DLL or EXE files, extract and produce information about the file, such as its version, entries found in its import table or resources. 
 
 Some of the files that use PE headers includes:
 .acm, .ax, .cpl, .dll, .drv, .efi, .exe, .mui, .ocx, .scr, .sys, .tsp
@@ -14,10 +14,10 @@ on Windows you can open the solution (PErser.sln) file and Build a solution of t
 On Linux you can build and run the program in following steps.
 
 ```
-$ git clone https://github.com/adabz/PErser
-$ cd PErser/
+$ git clone https://github.com/adabz/PE-Parser
+$ cd PE-Parser/
 $ make
-$ ./perser ../samples-pe/tier0_s.dll 
+$ ./peparser ../samples-pe/tier0_s.dll 
 showing file: ../samples-pe/tier0_s.dll 
 
 Magic bytes:            MZ
