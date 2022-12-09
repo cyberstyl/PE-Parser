@@ -6,7 +6,7 @@ SRC= ./src
 BUILD= ./build
 
 default: pe_interface.o
-	${CC} ${ARGS} -o perser ${BUILD}/pe_interface.o  ${BUILD}/misc.o  ${SRC}/main.c
+	${CC} ${ARGS} -o peparser ${BUILD}/pe_interface.o  ${BUILD}/misc.o  ${SRC}/main.c
 
 
 pe_interface.o: misc.o
@@ -18,7 +18,7 @@ misc.o:
 
 # Section for making a library 
 lib: pe_interface_lib misc_lib
-	${CC} ${ARGS} ${LIB_ARG} -shared -o libperser.so -Wl,-soname,libperser.so ${BUILD}/pe_interface.o ${BUILD}/misc.o
+	${CC} ${ARGS} ${LIB_ARG} -shared -o libpeparser.so -Wl,-soname,libpeparser.so ${BUILD}/pe_interface.o ${BUILD}/misc.o
 
 pe_interface_lib: misc_lib
 	${CC} ${ARGS} ${LIB_ARG} -c ${SRC}/pe_interface.c -o ${BUILD}/pe_interface.o
@@ -32,4 +32,4 @@ format:
 	rm ./src/*.orig
 
 clean:
-	rm -rf perser libperser* ${BUILD}/*.o
+	rm -rf peparser libpeparser* ${BUILD}/*.o
