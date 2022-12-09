@@ -10,7 +10,6 @@ Some of the files that use PE headers includes:
 ## Building / Compiling / Running
 The source code can be compiled and run on both Linux/Windows, using either gcc or Visual Studio (tested on Visual Studio 2015).
 
-on Windows you can open the solution (PErser.sln) file and Build a solution of the project.
 On Linux you can build and run the program in following steps.
 
 ```
